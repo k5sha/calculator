@@ -10,11 +10,82 @@ const { title } = Astro.props;
 <html lang="uk">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content="Рекурентне кодування онлайн" />
-    <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
+
+    <title>{title} | Coding Theory Lab — Калькулятор завадостійких кодів</title>
+    <meta
+      name="description"
+      content="Безкоштовний онлайн-інструмент для теорії кодування. Калькулятори для кодів Хаффмена, Хеммінга, БЧХ, Грея, рекурентних та циклічних кодів. Допомога студентам у навчанні."
+    />
+    <meta
+      name="keywords"
+      content="теорія кодування, код хеммінга, код хаффмена, код грея, рекурентні коди, код бчх, циклічні коди, ентропія шеннона, двійково-десятковий код, калькулятор онлайн, coding theory, k5sha"
+    />
+    <meta name="author" content="k5sha" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://your-domain.com/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://your-domain.com/" />
+    <meta property="og:title" content={`${title} | Coding Theory Lab`} />
+    <meta
+      property="og:description"
+      content="Вивчайте та розраховуйте складні коди онлайн: від Хаффмена до БЧХ. Інтерактивні інструменти для студентів."
+    />
+    <meta property="og:image" content="https://your-domain.com/og-image.png" />
+    <meta property="og:locale" content="uk_UA" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={`${title} | Coding Theory Lab`} />
+    <meta
+      name="twitter:description"
+      content="Потужний калькулятор для всіх типів завадостійкого кодування."
+    />
+    <meta name="twitter:image" content="https://your-domain.com/og-image.png" />
+
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="CodingLab" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#2563eb" />
+
+    <script type="application/ld+json" is:inline>
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Coding Theory Lab",
+        "description": "Educational online calculators for various coding theory algorithms including Huffman, Hamming, BCH, and more.",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "All",
+        "author": {
+          "@type": "Person",
+          "name": "k5sha",
+          "url": "https://github.com/k5sha"
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      }
+    </script>
+
+    <script type="application/ld+json" is:inline>
+      {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "name": "Доступні алгоритми кодування",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Код Грея" },
+          { "@type": "ListItem", "position": 2, "name": "Код Хаффмена" },
+          { "@type": "ListItem", "position": 3, "name": "Код Хеммінга" },
+          { "@type": "ListItem", "position": 4, "name": "Рекурентні коди" },
+          { "@type": "ListItem", "position": 5, "name": "Коди БЧХ" }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div class="page-wrapper">
