@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://calculator.k5sha.xyz/sitemap-index.xml

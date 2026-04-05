@@ -239,7 +239,6 @@ const alternateURL = new URL(
     flex: 1;
   }
 
-  /* NAVBAR STYLES */
   .navbar {
     position: sticky;
     top: 0;
@@ -298,7 +297,6 @@ const alternateURL = new URL(
     color: var(--primary);
   }
 
-  /* LANGUAGE PICKER (PILL DESIGN) */
   .lang-picker {
     display: flex;
     align-items: center;
@@ -346,7 +344,6 @@ const alternateURL = new URL(
     color: var(--primary);
   }
 
-  /* GITHUB BUTTON */
   .nav-link.github {
     background: var(--text);
     color: white;
@@ -358,10 +355,9 @@ const alternateURL = new URL(
     background: #000;
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-    color: white; /* Щоб синій hover не перебивав */
+    color: white;
   }
 
-  /* FOOTER STYLES */
   .site-footer {
     padding: 2.5rem 1rem;
     background-color: var(--card);
@@ -402,7 +398,6 @@ const alternateURL = new URL(
     color: #ef4444;
   }
 
-  /* TERMINAL HIGHLIGHTS (GLOBAL) */
   .terminal .highlight-blue {
     color: #60a5fa;
     font-weight: bold;
@@ -416,7 +411,6 @@ const alternateURL = new URL(
     font-weight: bold;
   }
 
-  /* MOBILE RESPONSIVE */
   @media (max-width: 768px) {
     .nav-links {
       gap: 0.75rem;
@@ -431,22 +425,22 @@ const alternateURL = new URL(
       font-size: 1.1rem;
     }
     .nav-link > span:not(.lang-label) {
-      display: none; /* Приховує текст "GitHub" та "Головна", залишаючи іконки */
+      display: none; 
     }
     .nav-container {
       padding: 0.75rem 1rem;
     }
     .lang-picker {
-      border-left: none; /* Забираємо лінію на мобільних для економії місця */
+      border-left: none; 
       padding-left: 0;
       margin-left: 0;
     }
     .lang-chip {
-      padding: 6px; /* Робимо кнопку квадратною/круглою */
+      padding: 6px; 
       border-radius: 8px;
     }
     .lang-label {
-      display: none; /* На телефонах залишаємо тільки прапорець */
+      display: none; 
     }
     .nav-link.github {
       padding: 0.5rem;
