@@ -3,8 +3,13 @@ name: "🩺 Continuous Integration (CI)"
 on:
   push:
     branches: ["master"]
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+      - '.gitignore'
+      - 'LICENSE'
   workflow_dispatch:
-
+    
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
