@@ -103,7 +103,7 @@ Contributions are welcome! If you have an idea for a new algorithm or a UI impro
 
 ## 📄 License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the Apache-2.0 license. See `LICENSE` for more information.
 
 ## 👤 Author
 
