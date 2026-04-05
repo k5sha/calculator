@@ -33,6 +33,17 @@ const allCodes = [
     isAvailable: true,
   },
   {
+    name: lang === "uk" ? "Код Грея" : "Gray Code",
+    path: `/${lang}/codes/gray`,
+    description:
+      lang === "uk"
+        ? "Мінімальна зміна бітів при переключенні станів. Ідеально для енкодерів."
+        : "Minimal bit change between states. Ideal for rotary encoders.",
+    category: t("category.transform"),
+    icon: "🔢",
+    isAvailable: true,
+  },
+  {
     name: lang === "uk" ? "Двійково-десятковий код" : "Binary-Coded Decimal",
     path: `/${lang}/codes/bcd`,
     description:
@@ -63,17 +74,6 @@ const allCodes = [
         : "An optimal prefix coding algorithm for lossless data compression.",
     category: t("category.compression"),
     icon: "📦",
-    isAvailable: false,
-  },
-  {
-    name: lang === "uk" ? "Код Грея" : "Gray Code",
-    path: "#",
-    description:
-      lang === "uk"
-        ? "Мінімальна зміна бітів при переключенні станів. Ідеально для енкодерів."
-        : "Minimal bit change between states. Ideal for rotary encoders.",
-    category: t("category.transform"),
-    icon: "🔢",
     isAvailable: false,
   },
 ];

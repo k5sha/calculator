@@ -1,0 +1,269 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import { getLangFromUrl } from "../../../i18n/utils";
+
+export function getStaticPaths() {
+  return [{ params: { lang: "en" } }, { params: { lang: "uk" } }];
+}
+
+const lang = getLangFromUrl(Astro.url);
+
+const pageT = {
+  uk: {
+    title: "Код Грея",
+    subtitle:
+      "Інструмент для перетворення між звичайним двійковим кодом та кодом Грея.",
+    aboutTitle: "📚 Про алгоритм",
+    aboutDesc:
+      "Код Грея — це двійкова система числення, в якій два сусідніх значення розрізняються лише в одному розряді. Це дозволяє мінімізувати помилки при зчитуванні даних.",
+    principle:
+      "Кодування (B → G): Перший біт залишається без змін, а кожен наступний g[i] = b[i] ⊕ b[i-1].",
+    decoding:
+      "Декодування (G → B): Перший біт залишається без змін, а кожен наступний b[i] = g[i] ⊕ b[i-1].",
+    application:
+      "Застосування: Оптичні енкодери, мінімізація логічних функцій (карти Карно), цифрова передача даних.",
+    sectionEnc: "🔒 Кодування",
+    sectionDec: "🔓 Декодування",
+    binInput: "Двійкове число (Binary):",
+    grayInput: "Код Грея (Gray):",
+    btnConvert: "Перетворити",
+    placeholder: "// Очікування введення даних...",
+  },
+  en: {
+    title: "Gray Code",
+    subtitle: "A tool for converting between standard binary and Gray code.",
+    aboutTitle: "📚 About Algorithm",
+    aboutDesc:
+      "Gray code is a binary numeral system where two successive values differ in only one bit. This minimizes errors in digital communications.",
+    principle:
+      "Encoding (B → G): The first bit remains the same, each subsequent g[i] = b[i] ⊕ b[i-1].",
+    decoding:
+      "Decoding (G → B): The first bit remains the same, each subsequent b[i] = g[i] ⊕ b[i-1].",
+    application:
+      "Application: Rotary encoders, Karnaugh maps minimization, error correction in digital signals.",
+    sectionEnc: "🔒 Encoding",
+    sectionDec: "🔓 Decoding",
+    binInput: "Binary Sequence:",
+    grayInput: "Gray Sequence:",
+    btnConvert: "Convert",
+    placeholder: "// Waiting for input...",
+  },
+}[lang];
+---
+
+<Layout title={`${pageT.title} — Calculator`}>
+  <main class="main-content">
+    <header class="hero">
+      <h1>{pageT.title}</h1>
+      <p class="description">{pageT.subtitle}</p>
+    </header>
+
+    <section class="theory-card">
+      <h3>{pageT.aboutTitle}</h3>
+      <p>{pageT.aboutDesc}</p>
+      <ul>
+        <li>
+          <strong>{pageT.principle.split(":")[0]}:</strong>
+          {pageT.principle.split(":")[1]}
+        </li>
+        <li>
+          <strong>{pageT.decoding.split(":")[0]}:</strong>
+          {pageT.decoding.split(":")[1]}
+        </li>
+        <li>
+          <strong>{pageT.application.split(":")[0]}:</strong>
+          {pageT.application.split(":")[1]}
+        </li>
+      </ul>
+    </section>
+
+    <div class="container">
+      <h2>{pageT.sectionEnc}</h2>
+      <div class="grid-layout">
+        <div class="controls">
+          <div class="input-group">
+            <label>{pageT.binInput}</label>
+            <input type="text" id="bin_input" value="10110" />
+          </div>
+          <button id="btn_gray_enc">{pageT.btnConvert}</button>
+        </div>
+        <div id="gray_enc_log" class="terminal">{pageT.placeholder}</div>
+      </div>
+    </div>
+
+    <div class="container">
+      <h2>{pageT.sectionDec}</h2>
+      <div class="grid-layout">
+        <div class="controls">
+          <div class="input-group">
+            <label>{pageT.grayInput}</label>
+            <input type="text" id="gray_input" value="11101" />
+          </div>
+          <button id="btn_gray_dec">{pageT.btnConvert}</button>
+        </div>
+        <div id="gray_dec_log" class="terminal">{pageT.placeholder}</div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .main-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+  .hero {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  h1 {
+    color: var(--primary);
+    font-size: 2.8rem;
+    margin-bottom: 10px;
+  }
+  .description {
+    font-size: 1.2rem;
+    color: #64748b;
+  }
+  .theory-card {
+    background: #eff6ff;
+    padding: 25px;
+    border-radius: 12px;
+    border-left: 6px solid var(--primary);
+    margin-bottom: 40px;
+  }
+  .theory-card h3 {
+    margin-top: 0;
+    color: #1e40af;
+  }
+  .container {
+    background: var(--card);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 40px;
+  }
+  .grid-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 30px;
+  }
+  @media (max-width: 900px) {
+    .grid-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+  .input-group {
+    margin-bottom: 20px;
+  }
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #475569;
+  }
+  input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-family: monospace;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+  button {
+    width: 100%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  button:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+  }
+  .terminal {
+    background: var(--terminal-bg);
+    color: var(--terminal-text);
+    padding: 20px;
+    border-radius: 12px;
+    font-family: "Fira Code", monospace;
+    font-size: 0.9rem;
+    min-height: 250px;
+    white-space: pre-wrap;
+    border: 1px solid #333;
+    overflow-x: auto;
+  }
+  :global(.highlight-blue) {
+    color: #60a5fa;
+    font-weight: bold;
+  }
+  :global(.highlight-green) {
+    color: #4ade80;
+    font-weight: bold;
+  }
+</style>
+
+<script define:vars={{ lang }}>
+  const ui = {
+    uk: {
+      encStart: "[*] КОДУВАННЯ У КОД ГРЕЯ",
+      decStart: "[*] ДЕКОДУВАННЯ З КОДУ ГРЕЯ",
+      step: "Крок",
+      final: "РЕЗУЛЬТАТ:",
+      errBits: "Помилка: Використовуйте лише 0 та 1",
+    },
+    en: {
+      encStart: "[*] ENCODING TO GRAY CODE",
+      decStart: "[*] DECODING FROM GRAY CODE",
+      step: "Step",
+      final: "RESULT:",
+      errBits: "Error: Use only 0 and 1",
+    },
+  }[lang];
+
+  const validate = (str) => /^[01]+$/.test(str.replace(/\s/g, ""));
+
+  document.getElementById("btn_gray_enc")?.addEventListener("click", () => {
+    const bin = document.getElementById("bin_input").value.replace(/\s/g, "");
+    if (!validate(bin)) return alert(ui.errBits);
+
+    let log = `<span class="highlight-blue">${ui.encStart}</span>\n\n`;
+    let gray = [bin[0]];
+
+    log += `${ui.step} 0: g[0] = b[0] = <span class="highlight-green">${bin[0]}</span>\n`;
+
+    for (let i = 1; i < bin.length; i++) {
+      const bit = parseInt(bin[i]) ^ parseInt(bin[i - 1]);
+      gray.push(bit);
+      log += `${ui.step} ${i}: g[${i}] = b[${i}](${bin[i]}) ⊕ b[${i - 1}](${bin[i - 1]}) = <span class="highlight-green">${bit}</span>\n`;
+    }
+
+    log += `\n<span class="highlight-blue">${ui.final}</span> ${gray.join("")}`;
+    document.getElementById("gray_enc_log").innerHTML = log;
+  });
+
+  document.getElementById("btn_gray_dec")?.addEventListener("click", () => {
+    const gray = document.getElementById("gray_input").value.replace(/\s/g, "");
+    if (!validate(gray)) return alert(ui.errBits);
+
+    let log = `<span class="highlight-blue">${ui.decStart}</span>\n\n`;
+    let bin = [gray[0]];
+
+    log += `${ui.step} 0: b[0] = g[0] = <span class="highlight-green">${gray[0]}</span>\n`;
+
+    for (let i = 1; i < gray.length; i++) {
+      const bit = parseInt(gray[i]) ^ parseInt(bin[i - 1]);
+      bin.push(bit);
+      log += `${ui.step} ${i}: b[${i}] = g[${i}](${gray[i]}) ⊕ b[${i - 1}](${bin[i - 1]}) = <span class="highlight-green">${bit}</span>\n`;
+    }
+
+    log += `\n<span class="highlight-blue">${ui.final}</span> ${bin.join("")}`;
+    document.getElementById("gray_dec_log").innerHTML = log;
+  });
+</script>
