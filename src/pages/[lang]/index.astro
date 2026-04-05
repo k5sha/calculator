@@ -33,6 +33,17 @@ const allCodes = [
     isAvailable: true,
   },
   {
+    name: lang === "uk" ? "Двійково-десятковий код" : "Binary-Coded Decimal",
+    path: `/${lang}/codes/bcd`,
+    description:
+      lang === "uk"
+        ? "Перетворення чисел у формат BCD (ДДК) з використанням довільних ваг розрядів для кожної тетради."
+        : "Convert numbers to BCD format using custom bit weights for each nibble.",
+    category: t("category.transform"),
+    icon: "🔢",
+    isAvailable: true,
+  },
+  {
     name: lang === "uk" ? "Код Хеммінга" : "Hamming Code",
     path: "#",
     description:

@@ -1,0 +1,317 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import { getLangFromUrl } from "../../../i18n/utils";
+
+export function getStaticPaths() {
+  return [{ params: { lang: "en" } }, { params: { lang: "uk" } }];
+}
+
+const lang = getLangFromUrl(Astro.url);
+
+const pageT = {
+  uk: {
+    title: "Двійково-десятковий код (ДДК)",
+    subtitle:
+      "Інструмент для вивчення прямого та зворотного перетворення BCD кодів з довільними вагами.",
+    aboutTitle: "📚 Про алгоритм",
+    aboutDesc:
+      "Двійково-десятковий код (BCD) — це спосіб представлення чисел, де кожна десяткова цифра кодується окремою 4-бітною тетрадою.",
+    principle:
+      "Кодування: Кожна цифра замінюється на 4 біти, сума ваг яких (напр. 8-4-2-1) дорівнює цій цифрі.",
+    decoding:
+      "Декодування: Послідовність розбивається на тетради, і значення кожної обчислюється як сума активних ваг.",
+    forbidden:
+      "Заборонені стани: Оскільки тетрада має 16 комбінацій, а цифр лише 10, стани > 9 є надлишковими.",
+    sectionEnc: "🔒 Кодування в ДДК",
+    sectionDec: "🔓 Декодування з ДДК",
+    numInput: "Десяткове число:",
+    bcdInput: "ДДК Послідовність (біти):",
+    weightInput: "Ваги розрядів (напр. 8-4-2-1):",
+    btnConvert: "Закодувати",
+    btnDecode: "Декодувати",
+    placeholder: "// Очікування введення даних...",
+  },
+  en: {
+    title: "Binary-Coded Decimal (BCD)",
+    subtitle:
+      "A tool for direct and reverse BCD transformation with custom weights.",
+    aboutTitle: "📚 About Algorithm",
+    aboutDesc:
+      "Binary-Coded Decimal (BCD) is an encoding where each decimal digit is represented by a separate 4-bit nibble.",
+    principle:
+      "Encoding: Each digit is replaced by 4 bits where the sum of weights (e.g. 8-4-2-1) equals the digit.",
+    decoding:
+      "Decoding: The sequence is split into nibbles, and each value is calculated as the sum of active weights.",
+    forbidden:
+      "Forbidden states: Since a nibble has 16 combinations and there are only 10 digits, states > 9 are redundant.",
+    sectionEnc: "🔒 BCD Encoding",
+    sectionDec: "🔓 BCD Decoding",
+    numInput: "Decimal Number:",
+    bcdInput: "BCD Sequence (bits):",
+    weightInput: "Bit Weights (e.g. 8-4-2-1):",
+    btnConvert: "Encode",
+    btnDecode: "Decode",
+    placeholder: "// Waiting for input...",
+  },
+}[lang];
+---
+
+<Layout title={`${pageT.title} — Calculator`}>
+  <main class="main-content">
+    <header class="hero">
+      <h1>{pageT.title}</h1>
+      <p class="description">{pageT.subtitle}</p>
+    </header>
+
+    <section class="theory-card">
+      <h3>{pageT.aboutTitle}</h3>
+      <p>{pageT.aboutDesc}</p>
+      <ul>
+        <li>
+          <strong>{pageT.principle.split(":")[0]}:</strong>
+          {pageT.principle.split(":")[1]}
+        </li>
+        <li>
+          <strong>{pageT.decoding.split(":")[0]}:</strong>
+          {pageT.decoding.split(":")[1]}
+        </li>
+        <li>
+          <strong>{pageT.forbidden.split(":")[0]}:</strong>
+          {pageT.forbidden.split(":")[1]}
+        </li>
+      </ul>
+    </section>
+
+    <div class="container">
+      <h2>{pageT.sectionEnc}</h2>
+      <div class="grid-layout">
+        <div class="controls">
+          <div class="input-group">
+            <label>{pageT.numInput}</label>
+            <input type="text" id="bcd_num" value="3091" />
+          </div>
+          <div class="input-group">
+            <label>{pageT.weightInput}</label>
+            <input type="text" id="bcd_weights_enc" value="8-4-2-1" />
+          </div>
+          <button id="btn_bcd_enc">{pageT.btnConvert}</button>
+        </div>
+        <div id="bcd_enc_log" class="terminal">{pageT.placeholder}</div>
+      </div>
+    </div>
+
+    <div class="container">
+      <h2>{pageT.sectionDec}</h2>
+      <div class="grid-layout">
+        <div class="controls">
+          <div class="input-group">
+            <label>{pageT.bcdInput}</label>
+            <input type="text" id="bcd_seq" value="0011 0000 1001 0001" />
+          </div>
+          <div class="input-group">
+            <label>{pageT.weightInput}</label>
+            <input type="text" id="bcd_weights_dec" value="8-4-2-1" />
+          </div>
+          <button id="btn_bcd_dec">{pageT.btnDecode}</button>
+        </div>
+        <div id="bcd_dec_log" class="terminal">{pageT.placeholder}</div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .main-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+  .hero {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  h1 {
+    color: var(--primary);
+    font-size: 2.8rem;
+    margin-bottom: 10px;
+  }
+  .description {
+    font-size: 1.2rem;
+    color: #64748b;
+  }
+  .theory-card {
+    background: #eff6ff;
+    padding: 25px;
+    border-radius: 12px;
+    border-left: 6px solid var(--primary);
+    margin-bottom: 40px;
+  }
+  .theory-card h3 {
+    margin-top: 0;
+    color: #1e40af;
+  }
+  .container {
+    background: var(--card);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 40px;
+  }
+  .grid-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 30px;
+  }
+  @media (max-width: 900px) {
+    .grid-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+  .input-group {
+    margin-bottom: 20px;
+  }
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #475569;
+  }
+  input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-family: monospace;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+  button {
+    width: 100%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  button:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+  }
+  .terminal {
+    background: var(--terminal-bg);
+    color: var(--terminal-text);
+    padding: 20px;
+    border-radius: 12px;
+    font-family: "Fira Code", monospace;
+    font-size: 0.9rem;
+    min-height: 250px;
+    white-space: pre-wrap;
+    border: 1px solid #333;
+    overflow-x: auto;
+  }
+  :global(.highlight-blue) {
+    color: #60a5fa;
+    font-weight: bold;
+  }
+  :global(.highlight-green) {
+    color: #4ade80;
+    font-weight: bold;
+  }
+</style>
+
+<script define:vars={{ lang }}>
+  const ui = {
+    uk: {
+      encStart: "[*] ПОЧАТОК КОДУВАННЯ ДДК",
+      decStart: "[*] ПОЧАТОК ДЕКОДУВАННЯ ДДК",
+      digit: "Цифра",
+      nibble: "Тетрада",
+      result: "Результат:",
+      final: "КІНЦЕВИЙ РЕЗУЛЬТАТ:",
+      errNum: "Введіть лише ціле число!",
+      errWeight: "Потрібно рівно 4 ваги (напр. 8-4-2-1)",
+      errLen: "Довжина бітів повинна бути кратною 4!",
+    },
+    en: {
+      encStart: "[*] BCD ENCODING START",
+      decStart: "[*] BCD DECODING START",
+      digit: "Digit",
+      nibble: "Nibble",
+      result: "Result:",
+      final: "FINAL RESULT:",
+      errNum: "Enter an integer only!",
+      errWeight: "Need exactly 4 weights (e.g. 8-4-2-1)",
+      errLen: "Bit length must be a multiple of 4!",
+    },
+  }[lang];
+
+  document.getElementById("btn_bcd_enc")?.addEventListener("click", () => {
+    const numStr = document.getElementById("bcd_num").value.trim();
+    const weightStr = document.getElementById("bcd_weights_enc").value.trim();
+    const weights = weightStr.split("-").map(Number);
+
+    if (!/^\d+$/.test(numStr)) return alert(ui.errNum);
+    if (weights.length !== 4) return alert(ui.errWeight);
+
+    let log = `<span class="highlight-blue">${ui.encStart} (${weightStr})</span>\n\n`;
+    let res = [];
+
+    for (const char of numStr) {
+      let val = parseInt(char);
+      let bits = [];
+      log += `<span class="highlight-green">${ui.digit} ${char}:</span>\n`;
+
+      for (const w of weights) {
+        if (val >= w) {
+          bits.push(1);
+          log += `  - Вага ${w} <= ${val} | Біт 1, залишок: ${val - w}\n`;
+          val -= w;
+        } else {
+          bits.push(0);
+          log += `  - Вага ${w} > ${val}  | Біт 0, залишок: ${val}\n`;
+        }
+      }
+      const nibble = bits.join("");
+      res.push(nibble);
+      log += `  ${ui.result} <span class="highlight-blue">${nibble}</span>\n\n`;
+    }
+
+    log += `\n<span class="highlight-green">${ui.final}</span>\n${res.join(" ")}`;
+    document.getElementById("bcd_enc_log").innerHTML = log;
+  });
+
+  document.getElementById("btn_bcd_dec")?.addEventListener("click", () => {
+    const bcdStr = document.getElementById("bcd_seq").value.replace(/\s/g, "");
+    const weightStr = document.getElementById("bcd_weights_dec").value.trim();
+    const weights = weightStr.split("-").map(Number);
+
+    if (bcdStr.length % 4 !== 0) return alert(ui.errLen);
+    if (weights.length !== 4) return alert(ui.errWeight);
+
+    let log = `<span class="highlight-blue">${ui.decStart} (${weightStr})</span>\n\n`;
+    let finalNum = "";
+
+    for (let i = 0; i < bcdStr.length; i += 4) {
+      const nibble = bcdStr.substring(i, i + 4);
+      let sum = 0;
+      let calc = [];
+
+      log += `<span class="highlight-green">${ui.nibble} [${nibble}]:</span>\n`;
+      nibble.split("").forEach((bit, idx) => {
+        if (bit === "1") {
+          sum += weights[idx];
+          calc.push(weights[idx]);
+        }
+      });
+
+      log += `  - Обчислення: ${calc.join(" + ") || "0"} = ${sum}\n\n`;
+      finalNum += sum.toString();
+    }
+
+    log += `\n<span class="highlight-green">${ui.final}</span> ${finalNum}`;
+    document.getElementById("bcd_dec_log").innerHTML = log;
+  });
+</script>
