@@ -7,7 +7,7 @@ export function getStaticPaths() {
   return [{ params: { lang: "en" } }, { params: { lang: "uk" } }];
 }
 
-const lang = getLangFromUrl(Astro.url);
+const lang = getLangFromUrl(Astro.url) as "en" | "uk";
 const t = useTranslations(lang);
 
 const localizedCodes = allCodes.map((code) => ({
@@ -24,7 +24,7 @@ const localizedCodes = allCodes.map((code) => ({
   <div class="main-wrapper">
     <header class="hero-section">
       <h1>Coding Theory <span>Lab</span></h1>
-      <p>{t("hero.subtitle")}</p>
+      <p class="hero-subtitle">{t("hero.subtitle")}</p>
 
       <div class="search-wrapper">
         <div class="search-box">
@@ -102,6 +102,34 @@ const localizedCodes = allCodes.map((code) => ({
         <p>{t("search.noResultsSub")}</p>
       </div>
     </div>
+
+    <section class="info-section">
+      <div class="grid-container">
+        <div class="content-text">
+          <h2>{t("info.title")}</h2>
+          <p>{t("info.p1")}</p>
+
+          <div class="features-list">
+            <div class="feature">
+              <h3>{t("info.feature1.title")}</h3>
+              <p>{t("info.feature1.p")}</p>
+            </div>
+            <div class="feature">
+              <h3>{t("info.feature2.title")}</h3>
+              <p>{t("info.feature2.p")}</p>
+            </div>
+            <div class="feature">
+              <h3>{t("info.feature3.title")}</h3>
+              <p>{t("info.feature3.p")}</p>
+            </div>
+            <div class="feature">
+              <h3>{t("info.feature4.title")}</h3>
+              <p>{t("info.feature4.p")}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 </Layout>
 
@@ -134,7 +162,7 @@ const localizedCodes = allCodes.map((code) => ({
 
 <style>
   .main-wrapper {
-    padding-bottom: 5rem;
+    padding-bottom: 0;
   }
   .hero-section {
     text-align: center;
@@ -147,7 +175,7 @@ const localizedCodes = allCodes.map((code) => ({
     font-weight: 800;
     letter-spacing: -0.04em;
     margin-bottom: 1rem;
-    line-height: 1;
+    line-height: 1.1;
   }
   .hero-section h1 span {
     background: linear-gradient(135deg, #2563eb 0%, #60a5fa 100%);
@@ -157,7 +185,7 @@ const localizedCodes = allCodes.map((code) => ({
     color: transparent;
     display: inline-block;
   }
-  .hero-section p {
+  .hero-subtitle {
     font-size: clamp(1.1rem, 4vw, 1.25rem);
     color: var(--text-light);
     margin-bottom: 2.5rem;
@@ -209,7 +237,7 @@ const localizedCodes = allCodes.map((code) => ({
     width: 100%;
     max-width: 1400px;
     margin: 0 auto;
-    padding: 0 1.5rem;
+    padding: 0 1.5rem 5rem;
   }
   .grid {
     display: grid;
@@ -231,7 +259,7 @@ const localizedCodes = allCodes.map((code) => ({
     opacity: 0.7;
     cursor: default;
     pointer-events: none;
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(241, 245, 249, 0.5);
   }
   .glass-card:not(.is-pending):hover {
     transform: translateY(-5px);
@@ -278,7 +306,8 @@ const localizedCodes = allCodes.map((code) => ({
     margin: 0;
   }
   .card-arrow {
-    margin-top: 2rem;
+    margin-top: auto;
+    padding-top: 2rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -286,8 +315,34 @@ const localizedCodes = allCodes.map((code) => ({
     font-weight: 700;
     font-size: 0.9rem;
   }
-  .is-pending .card-arrow {
+  .info-section {
+    padding: 5rem 0;
+    background: rgba(241, 245, 249, 0.4);
+    border-top: 1px solid var(--border);
+  }
+  .content-text h2 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+  .content-text p {
+    max-width: 900px;
+    font-size: 1.15rem;
+    line-height: 1.8;
     color: var(--text-light);
+    margin-bottom: 3rem;
+  }
+  .features-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 3rem;
+  }
+  .feature h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--primary);
   }
   .empty-state {
     text-align: center;
