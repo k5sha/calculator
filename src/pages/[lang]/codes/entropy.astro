@@ -1,0 +1,347 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import { getLangFromUrl } from "../../../i18n/utils";
+
+export function getStaticPaths() {
+  return [{ params: { lang: "en" } }, { params: { lang: "uk" } }];
+}
+
+const lang = getLangFromUrl(Astro.url);
+
+const pageT = {
+  uk: {
+    title: "Кількість інформації та Ентропія",
+    subtitle: "Лабораторна робота: Аналіз інформаційних характеристик джерел.",
+    aboutTitle: "📚 Формули та визначення",
+    aboutDesc:
+      "Кількість інформації — це апостеріорна характеристика, а ентропія — апріорна міра невизначеності стану джерела.",
+    theory1: "Індивідуальна інформація: I(Xi) = -log2 P(Xi).",
+    theory2: "Безумовна ентропія: H(X) = -Σ p(Xi) log p(Xi).",
+    theory3: "Умовна ентропія: H(X/Y) = Σ p(yj) H(X/yj).",
+    section1: "🔢 Кількість інформації в ансамблі",
+    section2: "📊 Безумовна та Максимальна ентропія",
+    section3: "🧩 Умовна ентропія джерела",
+    inputProbs: "Ймовірності P(Xi) (через кому):",
+    inputSeq: "Послідовність (напр. X1 X4 X1):",
+    inputPy: "Безумовні ймовірності P(yj):",
+    inputMatrix: "Матриця p(xi/yj) (рядки ';', значення ','):",
+    btnCalc: "Розрахувати",
+    placeholder: "// Очікування введення даних...",
+  },
+  en: {
+    title: "Information Amount & Entropy",
+    subtitle:
+      "Laboratory work: Analysis of source information characteristics.",
+    aboutTitle: "📚 Formulas & Definitions",
+    aboutDesc:
+      "Information amount is a posterior characteristic, while entropy is an a priori measure of uncertainty.",
+    theory1: "Self-information: I(Xi) = -log2 P(Xi).",
+    theory2: "Unconditional Entropy: H(X) = -Σ p(Xi) log p(Xi).",
+    theory3: "Conditional Entropy: H(X/Y) = Σ p(yj) H(X/yj).",
+    section1: "🔢 Information in Ensemble",
+    section2: "📊 Unconditional & Max Entropy",
+    section3: "🧩 Conditional Source Entropy",
+    inputProbs: "Probabilities P(Xi) (comma separated):",
+    inputSeq: "Sequence (e.g. X1 X4 X1):",
+    inputPy: "Unconditional P(yj):",
+    inputMatrix: "Matrix p(xi/yj) (rows ';', values ','):",
+    btnCalc: "Calculate",
+    placeholder: "// Waiting for input...",
+  },
+}[lang];
+---
+
+<Layout title={`${pageT.title} — Lab`}>
+  <main class="main-content">
+    <header class="hero">
+      <h1>{pageT.title}</h1>
+      <p class="description">{pageT.subtitle}</p>
+    </header>
+
+    <section class="theory-card">
+      <h3>{pageT.aboutTitle}</h3>
+      <p>{pageT.aboutDesc}</p>
+      <ul>
+        <li>
+          <strong>{pageT.theory1.split(":")[0]}:</strong>
+          {pageT.theory1.split(":")[1]}
+        </li>
+        <li>
+          <strong>{pageT.theory2.split(":")[0]}:</strong>
+          {pageT.theory2.split(":")[1]}
+        </li>
+        <li>
+          <strong>{pageT.theory3.split(":")[0]}:</strong>
+          {pageT.theory3.split(":")[1]}
+        </li>
+      </ul>
+    </section>
+
+    <div class="container">
+      <h2>{pageT.section1}</h2>
+      <div class="grid-layout">
+        <div class="controls">
+          <div class="input-group">
+            <label>{pageT.inputProbs}</label>
+            <input type="text" id="m1_probs" value="0.5, 0.25, 0.125, 0.125" />
+          </div>
+          <div class="input-group">
+            <label>{pageT.inputSeq}</label>
+            <input type="text" id="m1_seq" value="X1 X4 X1 X3 X3 X2 X1 X1 X2" />
+          </div>
+          <button id="btn_m1">{pageT.btnCalc}</button>
+        </div>
+        <div id="log_m1" class="terminal">{pageT.placeholder}</div>
+      </div>
+    </div>
+
+    <div class="container">
+      <h2>{pageT.section2}</h2>
+      <div class="grid-layout">
+        <div class="controls">
+          <div class="input-group">
+            <label>{pageT.inputProbs}</label>
+            <textarea id="m2_probs" rows="2"
+              >0.13, 0.28, 0.22, 0.02, 0.13, 0.22</textarea
+            >
+          </div>
+          <button id="btn_m2">{pageT.btnCalc}</button>
+        </div>
+        <div id="log_m2" class="terminal">{pageT.placeholder}</div>
+      </div>
+    </div>
+
+    <div class="container">
+      <h2>{pageT.section3}</h2>
+      <div class="grid-layout">
+        <div class="controls">
+          <div class="input-group">
+            <label>{pageT.inputPy}</label>
+            <input type="text" id="m3_py" value="0.68, 0.13, 0.19" />
+          </div>
+          <div class="input-group">
+            <label>{pageT.inputMatrix} (p(xi/yj))</label>
+            <textarea id="m3_matrix" rows="4"
+              >0.10, 0.29, 0.78; 0.04, 0.32, 0.06; 0.86, 0.39, 0.16</textarea
+            >
+          </div>
+          <button id="btn_m3">{pageT.btnCalc}</button>
+        </div>
+        <div id="log_m3" class="terminal">{pageT.placeholder}</div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .main-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+  .hero {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  h1 {
+    color: var(--primary);
+    font-size: 2.8rem;
+    margin-bottom: 10px;
+  }
+  .description {
+    font-size: 1.2rem;
+    color: #64748b;
+  }
+  .theory-card {
+    background: #eff6ff;
+    padding: 25px;
+    border-radius: 12px;
+    border-left: 6px solid var(--primary);
+    margin-bottom: 40px;
+  }
+  .theory-card h3 {
+    margin-top: 0;
+    color: #1e40af;
+  }
+  .container {
+    background: var(--card);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 40px;
+  }
+  .grid-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 30px;
+  }
+  @media (max-width: 900px) {
+    .grid-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+  .input-group {
+    margin-bottom: 20px;
+  }
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #475569;
+  }
+  input,
+  textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-family: monospace;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+  button {
+    width: 100%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  button:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+  }
+  .terminal {
+    background: var(--terminal-bg);
+    color: var(--terminal-text);
+    padding: 20px;
+    border-radius: 12px;
+    font-family: "Fira Code", monospace;
+    font-size: 0.9rem;
+    min-height: 250px;
+    white-space: pre-wrap;
+    border: 1px solid #333;
+    overflow-x: auto;
+  }
+  :global(.highlight-blue) {
+    color: #60a5fa;
+    font-weight: bold;
+  }
+  :global(.highlight-green) {
+    color: #4ade80;
+    font-weight: bold;
+  }
+</style>
+
+<script define:vars={{ lang }}>
+  const log2 = (x) => (x > 0 ? Math.log2(x) : 0);
+
+  const ui = {
+    uk: {
+      m1Start: "[*] РОЗРАХУНОК КІЛЬКОСТІ ІНФОРМАЦІЇ",
+      m2Start: "[*] АНАЛІЗ ЕНТРОПІЇ H(X)",
+      m3Start: "[*] РОЗРАХУНОК УМОВНОЇ ЕНТРОПІЇ",
+      partial: "Часткова H(X/yj)",
+      weighted: "зважена",
+      total: "ЗАГАЛЬНА УМОВНА ЕНТРОПІЯ H(X/Y)",
+      res: "РЕЗУЛЬТАТ:",
+      step: "Крок",
+    },
+    en: {
+      m1Start: "[*] INFORMATION AMOUNT CALCULATION",
+      m2Start: "[*] ENTROPY H(X) ANALYSIS",
+      m3Start: "[*] CONDITIONAL ENTROPY CALCULATION",
+      partial: "Partial H(X/yj)",
+      weighted: "weighted",
+      total: "TOTAL CONDITIONAL ENTROPY H(X/Y)",
+      res: "RESULT:",
+      step: "Step",
+    },
+  }[lang];
+
+  // Logic 1: Info Amount in Ensemble
+  document.getElementById("btn_m1")?.addEventListener("click", () => {
+    const p = document.getElementById("m1_probs").value.split(",").map(Number);
+    const seq = document
+      .getElementById("m1_seq")
+      .value.toUpperCase()
+      .split(/\s+/);
+    let totalI = 0;
+    let log = `<span class="highlight-blue">${ui.m1Start}</span>\n\n`;
+
+    seq.forEach((s, idx) => {
+      const charIdx = parseInt(s.replace("X", "")) - 1;
+      if (p[charIdx]) {
+        const val = -log2(p[charIdx]);
+        totalI += val;
+        log += `${ui.step} ${idx + 1}: ${s} (p=${p[charIdx]}) -> I=${val.toFixed(3)}\n`;
+      }
+    });
+    log += `\n<span class="highlight-blue">${ui.res}</span> <span class="highlight-green">${totalI.toFixed(3)}</span> bit`;
+    document.getElementById("log_m1").innerHTML = log;
+  });
+
+  // Logic 2: Unconditional & Max Entropy
+  document.getElementById("btn_m2")?.addEventListener("click", () => {
+    const p = document.getElementById("m2_probs").value.split(",").map(Number);
+    let h = 0;
+    let log = `<span class="highlight-blue">${ui.m2Start}</span>\n\n`;
+
+    p.forEach((pi, i) => {
+      if (pi > 0) {
+        const part = pi * -log2(pi);
+        h += part;
+        log += `p(X${i + 1})=${pi.toFixed(3)} -> contribution: ${part.toFixed(4)}\n`;
+      }
+    });
+
+    const hmax = log2(p.length);
+    log += `\n<span class="highlight-blue">H(X) =</span> <span class="highlight-green">${h.toFixed(4)}</span> bit/sym`;
+    log += `\n<span class="highlight-blue">Hmax =</span> <span class="highlight-green">${hmax.toFixed(4)}</span> bit/sym (log2 ${p.length})`;
+    document.getElementById("log_m2").innerHTML = log;
+  });
+
+  // Logic 3: Conditional Entropy (General + Partial + Hmax)
+  document.getElementById("btn_m3")?.addEventListener("click", () => {
+    const py = document.getElementById("m3_py").value.split(",").map(Number);
+    const rows = document.getElementById("m3_matrix").value.split(";");
+
+    const n_y = rows.length; // Number of states in Y
+    const h_max_yx = log2(n_y);
+    let hxy = 0;
+
+    let log = `<span class="highlight-blue">${ui.m3Start}</span>\n`;
+    log += `------------------------------------------\n`;
+    log += `<span class="highlight-blue">Hmax(Y/X) = log2(${n_y}) = </span> <span class="highlight-green">${h_max_yx.toFixed(4)}</span> bit/sym\n`;
+    log += `------------------------------------------\n\n`;
+
+    for (let j = 0; j < py.length; j++) {
+      let h_partial = 0;
+      rows.forEach((row) => {
+        const p_cond = row.split(",").map(Number)[j];
+        if (p_cond > 0) h_partial -= p_cond * log2(p_cond);
+      });
+
+      const weighted = py[j] * h_partial;
+      hxy += weighted;
+
+      log += `<span class="highlight-blue">y${j + 1}:</span> ${ui.partial} = ${h_partial.toFixed(4)}\n`;
+      log += `    P(y${j + 1})*H = ${py[j]} * ${h_partial.toFixed(4)} = ${weighted.toFixed(4)} (${ui.weighted})\n\n`;
+
+      // Detailed logging to browser console
+      console.log(
+        `[Entropy Engine] State y${j + 1}: Partial Entropy=${h_partial.toFixed(4)}, Weighted=${weighted.toFixed(4)}`,
+      );
+    }
+
+    log += `------------------------------------------\n`;
+    log += `<span class="highlight-blue">${ui.total}:</span>\n`;
+    log += `<span class="highlight-green">${hxy.toFixed(4)}</span> bit/sym`;
+
+    document.getElementById("log_m3").innerHTML = log;
+    console.log(`[Entropy Engine] Final H(X/Y): ${hxy.toFixed(4)}`);
+  });
+</script>

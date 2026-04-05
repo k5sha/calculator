@@ -90,6 +90,17 @@ const allCodes = [
     isAvailable: true,
   },
   {
+    name: lang === "uk" ? "Ентропія та Інформація" : "Entropy & Information",
+    path: `/${lang}/codes/entropy`,
+    description:
+      lang === "uk"
+        ? "Розрахунок власної інформації символів та безумовної ентропії джерела повідомлень."
+        : "Calculation of self-information and unconditional entropy of a message source.",
+    category: lang === "uk" ? "Аналіз" : "Analysis",
+    icon: "📊",
+    isAvailable: true,
+  },
+  {
     name: lang === "uk" ? "Код Хеммінга" : "Hamming Code",
     path: "#",
     description:
