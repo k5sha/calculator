@@ -1,0 +1,334 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import { getLangFromUrl } from "../../../i18n/utils";
+
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'en' } },
+    { params: { lang: 'uk' } },
+  ];
+}
+
+const lang = getLangFromUrl(Astro.url);
+
+const pageT = {
+  uk: {
+    title: "Рекурентний код",
+    subtitle:
+      "Інтерактивний інструмент для вивчення завадостійкого рекурентного коду з кроком додавання k.",
+    aboutTitle: "📚 Про алгоритм",
+    aboutDesc:
+      "Рекурентний код — це метод кодування, де кожна перевірочна посилка залежить від поточного та попереднього інформаційного біта. Він належить до класу систематичних кодів.",
+    principle:
+      "Принцип кодування: Формується послідовність перевірочних бітів за формулою: b[i] = a[i] ⊕ a[i-k]. Перші k бітів перевірочної послідовності дорівнюють нулю.",
+    correction:
+      "Виправлення помилок: Алгоритм ефективно виправляє одиночні помилки в інформаційних бітах. Якщо стається помилка в біті a[i], вона 'відгукується' в синдромі на позиціях i та i+k.",
+    syndrome:
+      "Синдром: Це результат XOR між прийнятими перевірочними бітами та тими, що згенеровані на основі прийнятого повідомлення.",
+    encoding: "🔒 Кодування",
+    decoding: "🔓 Декодування та виправлення",
+    msgInput: "Інформаційне повідомлення (A):",
+    stepInput: "Крок k:",
+    btnEncode: "Закодувати",
+    btnDecode: "Виправити помилки",
+    receivedA: "Прийняте повідомлення (A'):",
+    receivedB: "Прийняті перевірочні (B'):",
+    placeholderEncode: "// Натисніть 'Закодувати', щоб побачити кроки...",
+    placeholderDecode: "// Очікування даних для аналізу...",
+  },
+  en: {
+    title: "Recurrent Code",
+    subtitle:
+      "An interactive tool for studying error-correcting recurrent codes with step k.",
+    aboutTitle: "📚 About Algorithm",
+    aboutDesc:
+      "Recurrent code is a coding method where each check bit depends on the current and previous information bits. It belongs to the class of systematic codes.",
+    principle:
+      "Encoding Principle: A sequence of check bits is formed by the formula: b[i] = a[i] ⊕ a[i-k]. The first k bits of the check sequence are zero.",
+    correction:
+      "Error Correction: The algorithm effectively corrects single errors in information bits. If an error occurs in bit a[i], it 'echoes' in the syndrome at positions i and i+k.",
+    syndrome:
+      "Syndrome: This is the XOR result between the received check bits and those generated based on the received message.",
+    encoding: "🔒 Encoding",
+    decoding: "🔓 Decoding & Correction",
+    msgInput: "Information Message (A):",
+    stepInput: "Step k:",
+    btnEncode: "Encode",
+    btnDecode: "Fix Errors",
+    receivedA: "Received Message (A'):",
+    receivedB: "Received Check Bits (B'):",
+    placeholderEncode: "// Click 'Encode' to see the steps...",
+    placeholderDecode: "// Waiting for data analysis...",
+  },
+}[lang];
+---
+
+<Layout title={`${pageT.title} — Calculator`}>
+  <main class="main-content">
+    <header class="hero">
+      <h1>{pageT.title}</h1>
+      <p class="description">{pageT.subtitle}</p>
+    </header>
+
+    <section class="theory-card">
+      <h3>{pageT.aboutTitle}</h3>
+      <p>{pageT.aboutDesc}</p>
+      <ul>
+        <li>
+          <strong>{pageT.principle.split(":")[0]}:</strong>
+          {pageT.principle.split(":")[1]}
+        </li>
+        <li>
+          <strong>{pageT.correction.split(":")[0]}:</strong>
+          {pageT.correction.split(":")[1]}
+        </li>
+        <li>
+          <strong>{pageT.syndrome.split(":")[0]}:</strong>
+          {pageT.syndrome.split(":")[1]}
+        </li>
+      </ul>
+    </section>
+
+    <div class="container">
+      <h2>{pageT.encoding}</h2>
+      <div class="grid-layout">
+        <div class="controls">
+          <div class="input-group">
+            <label>{pageT.msgInput}</label>
+            <input type="text" id="encode_msg" value="001011100100001" />
+          </div>
+          <div class="input-group">
+            <label>{pageT.stepInput}</label>
+            <input type="number" id="encode_k" value="4" />
+          </div>
+          <button id="btn_encode">{pageT.btnEncode}</button>
+        </div>
+        <div id="encode_log" class="terminal">{pageT.placeholderEncode}</div>
+      </div>
+    </div>
+
+    <div class="container">
+      <h2>{pageT.decoding}</h2>
+      <div class="grid-layout">
+        <div class="controls">
+          <div class="input-group">
+            <label>{pageT.receivedA}</label>
+            <input type="text" id="decode_msg" value="000100111011101001" />
+          </div>
+          <div class="input-group">
+            <label>{pageT.receivedB}</label>
+            <input type="text" id="decode_check" value="000010100001000011" />
+          </div>
+          <div class="input-group">
+            <label>{pageT.stepInput}</label>
+            <input type="number" id="decode_k" value="4" />
+          </div>
+          <button id="btn_decode">{pageT.btnDecode}</button>
+        </div>
+        <div id="decode_log" class="terminal">{pageT.placeholderDecode}</div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  /* Стилі залишаються без змін, оскільки вони універсальні */
+  .main-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+  .hero {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  h1 {
+    color: var(--primary);
+    font-size: 2.8rem;
+    margin-bottom: 10px;
+  }
+  .description {
+    font-size: 1.2rem;
+    color: #64748b;
+  }
+  .theory-card {
+    background: #eff6ff;
+    padding: 25px;
+    border-radius: 12px;
+    border-left: 6px solid var(--primary);
+    margin-bottom: 40px;
+  }
+  .theory-card h3 {
+    margin-top: 0;
+    color: #1e40af;
+  }
+  .theory-card code {
+    background: #dbeafe;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-weight: bold;
+  }
+  .container {
+    background: var(--card);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 40px;
+  }
+  .grid-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 30px;
+  }
+  @media (max-width: 900px) {
+    .grid-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+  .input-group {
+    margin-bottom: 20px;
+  }
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #475569;
+  }
+  input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-family: "Courier New", monospace;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+  button {
+    width: 100%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  button:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+  }
+  .terminal {
+    background: var(--terminal-bg);
+    color: var(--terminal-text);
+    padding: 20px;
+    border-radius: 12px;
+    font-family: "Fira Code", monospace;
+    font-size: 0.9rem;
+    min-height: 250px;
+    white-space: pre-wrap;
+    border: 1px solid #333;
+  }
+</style>
+
+<script define:vars={{ lang }}>
+  // Використовуємо локалізовані рядки прямо в JS
+  const ui = {
+    uk: {
+      errBits: "Помилка: Використовуйте лише 0 та 1",
+      errLen: "Довжини A та B повинні бути однаковими!",
+      startEnc: "[*] ПОЧАТОК КОДУВАННЯ",
+      successEnc: "[УСПІХ] Згенерована послідовність B:",
+      step: "Крок",
+      analysis: "[*] АНАЛІЗ ПРИЙНЯТОГО ПОВІДОМЛЕННЯ",
+      ctrlBits: "Контрольні біти:",
+      recBits: "Прийняті біти:",
+      syndrom: "Синдром помилки:",
+      errFound: "[!] Помилка в біті a",
+      res: "[*] РЕЗУЛЬТАТ:",
+      orig: "Початкове A:",
+      corr: "Виправлене A:",
+      fixCount: "Кількість виправлень:",
+    },
+    en: {
+      errBits: "Error: Use only 0 and 1",
+      errLen: "A and B lengths must be equal!",
+      startEnc: "[*] ENCODING START",
+      successEnc: "[SUCCESS] Generated sequence B:",
+      step: "Step",
+      analysis: "[*] RECEIVED MESSAGE ANALYSIS",
+      ctrlBits: "Control bits:",
+      recBits: "Received bits:",
+      syndrom: "Error Syndrome:",
+      errFound: "[!] Error in bit a",
+      res: "[*] RESULT:",
+      orig: "Original A:",
+      corr: "Corrected A:",
+      fixCount: "Corrections count:",
+    },
+  }[lang];
+
+  const getVal = (id) => document.getElementById(id).value;
+  const writeLog = (id, html) => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = html;
+  };
+
+  document.getElementById("btn_encode")?.addEventListener("click", () => {
+    const msg = getVal("encode_msg").replace(/\s/g, "");
+    const k = parseInt(getVal("encode_k"));
+    if (!/^[01]+$/.test(msg)) return alert(ui.errBits);
+
+    let a = msg.split("").map(Number);
+    let b = new Array(a.length).fill(0);
+    let log = `<span class="highlight-blue">${ui.startEnc} (k=${k})</span>\n`;
+
+    for (let i = k; i < a.length; i++) {
+      b[i] = a[i] ^ a[i - k];
+      log += `${ui.step} ${i}: a[${i}](${a[i]}) ⊕ a[${i - k}](${a[i - k]}) = ${b[i]}\n`;
+    }
+
+    log += `\n<span class="highlight-green">${ui.successEnc}</span>\n${b.join("")}`;
+    writeLog("encode_log", log);
+  });
+
+  document.getElementById("btn_decode")?.addEventListener("click", () => {
+    const a_in = getVal("decode_msg").replace(/\s/g, "");
+    const b_in = getVal("decode_check").replace(/\s/g, "");
+    const k = parseInt(getVal("decode_k"));
+
+    if (a_in.length !== b_in.length) return alert(ui.errLen);
+
+    let a = a_in.split("").map(Number);
+    let b_rec = b_in.split("").map(Number);
+    let n = a.length;
+    let log = `<span class="highlight-blue">${ui.analysis}</span>\n`;
+
+    let b_ctrl = new Array(n).fill(0);
+    for (let i = k; i < n; i++) b_ctrl[i] = a[i] ^ a[i - k];
+
+    let diff = b_ctrl.map((val, i) => val ^ b_rec[i]);
+    log += `${ui.ctrlBits}  ${b_ctrl.join("")}\n`;
+    log += `${ui.recBits}     ${b_rec.join("")}\n`;
+    log += `${ui.syndrom}   <span class="highlight-red">${diff.join("")}</span>\n\n`;
+
+    let a_corr = [...a];
+    let fixCount = 0;
+    for (let i = 0; i < n - k; i++) {
+      if (diff[i] === 1 && diff[i + k] === 1) {
+        log += `<span class="highlight-red">[!]</span> ${ui.errFound}[${i}]. Inverting...\n`;
+        a_corr[i] = 1 - a_corr[i];
+        diff[i] = 0;
+        diff[i + k] = 0;
+        fixCount++;
+      }
+    }
+
+    log += `\n<span class="highlight-green">${ui.res}</span>\n`;
+    log += `${ui.orig}  ${a_in}\n`;
+    log += `${ui.corr} ${a_corr.join("")}\n`;
+    log += `${ui.fixCount} ${fixCount}`;
+
+    writeLog("decode_log", log);
+  });
+</script>

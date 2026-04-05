@@ -1,47 +1,67 @@
 ---
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
+
 interface Props {
   title: string;
 }
 
 const { title } = Astro.props;
+
+const siteBase = Astro.site || "https://calculator.k5sha.xyz";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const canonicalURL = new URL(
+  Astro.url.pathname,
+  Astro.site || "https://calculator.k5sha.xyz",
+);
+
+const alternateLang = lang === "en" ? "uk" : "en";
+const alternatePath = Astro.url.pathname.replace(
+  `/${lang}/`,
+  `/${alternateLang}/`,
+);
+const alternateURL = new URL(
+  alternatePath,
+  Astro.site || "https://calculator.k5sha.xyz",
+);
 ---
 
 <!doctype html>
-<html lang="uk">
+<html lang={lang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content={Astro.generator} />
 
-    <title>{title} | Coding Theory Lab — Калькулятор завадостійких кодів</title>
-    <meta
-      name="description"
-      content="Безкоштовний онлайн-інструмент для теорії кодування. Калькулятори для кодів Хаффмена, Хеммінга, БЧХ, Грея, рекурентних та циклічних кодів."
-    />
-    <meta
-      name="keywords"
-      content="теорія кодування, код хеммінга, код хаффмена, код грея, рекурентні коди, код бчх, циклічні коди, k5sha"
-    />
+    <title>{title} | Coding Theory Lab</title>
+    <meta name="title" content={`${title} | Coding Theory Lab`} />
+    <meta name="description" content={t("hero.subtitle")} />
     <meta name="author" content="k5sha" />
+    <link rel="canonical" href={canonicalURL} />
+
+    <link rel="alternate" hreflang="en" href={new URL("/en/", siteBase).href} />
+    <link rel="alternate" hreflang="uk" href={new URL("/uk/", siteBase).href} />
+    <link rel="alternate" hreflang={alternateLang} href={alternateURL} />
+    <link
+      rel="alternate"
+      hreflang="x-default"
+      href={new URL("/en/", siteBase).href}
+    />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap"
       rel="stylesheet"
     />
 
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://calculator.k5sha.xyz/" />
+    <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={`${title} | Coding Theory Lab`} />
-    <meta
-      property="og:description"
-      content="Вивчайте та розраховуйте складні коди онлайн."
-    />
-    <meta
-      property="og:image"
-      content="https://calculator.k5sha.xyz/og-image.png"
-    />
+    <meta property="og:description" content={t("hero.subtitle")} />
+    <meta property="og:image" content="/og-image.png" />
     <meta name="twitter:card" content="summary_large_image" />
 
     <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
@@ -69,7 +89,7 @@ const { title } = Astro.props;
   <body>
     <nav class="navbar">
       <div class="nav-container">
-        <a href="/" class="nav-logo">
+        <a href={`/${lang}/`} class="nav-logo">
           <img
             src="/favicon.ico"
             alt="Logo"
@@ -80,7 +100,51 @@ const { title } = Astro.props;
           <span class="logo-text">Coding Theory <span>Lab</span></span>
         </a>
         <div class="nav-links">
-          <a href="/" class="nav-link">Головна</a>
+          <a href={`/${lang}/`} class="nav-link">
+            {lang === "uk" ? "Головна" : "Home"}
+          </a>
+
+          <div class="lang-picker">
+            <a
+              href={alternatePath}
+              class="lang-chip"
+              title={lang === "en"
+                ? "Змінити мову на Українську"
+                : "Change language to English"}
+            >
+              <span class="flag-icon">
+                {
+                  lang === "en" ? (
+                    <svg viewBox="0 0 640 480" width="16" height="12">
+                      <>
+                        <rect width="640" height="480" fill="#ffd700" />
+                        <rect width="640" height="240" fill="#0057b8" />
+                      </>
+                    </svg>
+                  ) : (
+                    <svg viewBox="0 0 640 480" width="16" height="12">
+                      <>
+                        <path fill="#bd3d44" d="M0 0h640v480H0z" />
+                        <path
+                          stroke="#fff"
+                          stroke-width="37"
+                          d="M0 55h640M0 129h640M0 203h640M0 277h640M0 351h640M0 425h640"
+                        />
+                        <path fill="#192f5d" d="M0 0h365v258H0z" />
+                        <circle fill="#fff" cx="46" cy="35" r="12" />
+                        <circle fill="#fff" cx="116" cy="35" r="12" />
+                        <circle fill="#fff" cx="186" cy="35" r="12" />
+                      </>
+                    </svg>
+                  )
+                }
+              </span>
+              <span class="lang-label">
+                {lang === "en" ? "UA" : "EN"}
+              </span>
+            </a>
+          </div>
+
           <a
             href="https://github.com/k5sha/calculator"
             target="_blank"
@@ -115,7 +179,9 @@ const { title } = Astro.props;
       <footer class="site-footer">
         <div class="footer-content">
           <p>
-            Developed with <span class="heart">❤️</span> by
+            {lang === "uk" ? "Розроблено з" : "Developed with"}
+            <span class="heart">❤️</span>
+            {lang === "uk" ? "від" : "by"}
             <a
               href="https://github.com/k5sha"
               target="_blank"
@@ -169,11 +235,11 @@ const { title } = Astro.props;
     flex-direction: column;
     min-height: calc(100vh - 65px);
   }
-
   main {
     flex: 1;
   }
 
+  /* NAVBAR STYLES */
   .navbar {
     position: sticky;
     top: 0;
@@ -200,22 +266,15 @@ const { title } = Astro.props;
     text-decoration: none;
     transition: transform 0.2s ease;
   }
-
-  .logo-img {
-    transition: transform 0.3s ease;
-  }
-
   .nav-logo:hover .logo-img {
     transform: scale(1.1) rotate(-5deg);
   }
-
   .logo-text {
     font-size: 1.25rem;
     font-weight: 800;
     color: var(--text);
     letter-spacing: -0.03em;
   }
-
   .logo-text span {
     color: var(--primary);
   }
@@ -223,9 +282,8 @@ const { title } = Astro.props;
   .nav-links {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1.25rem;
   }
-
   .nav-link {
     text-decoration: none;
     color: var(--text);
@@ -235,36 +293,81 @@ const { title } = Astro.props;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    opacity: 0.85;
   }
-
   .nav-link:hover {
     color: var(--primary);
-    opacity: 1;
   }
 
+  /* LANGUAGE PICKER (PILL DESIGN) */
+  .lang-picker {
+    display: flex;
+    align-items: center;
+    margin-left: 0.25rem;
+    padding-left: 1rem;
+    border-left: 1px solid var(--border);
+  }
+
+  .lang-chip {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: rgba(37, 99, 235, 0.05);
+    border: 1px solid rgba(37, 99, 235, 0.15);
+    border-radius: 100px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .lang-chip:hover {
+    background: #ffffff;
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
+    transform: translateY(-1px);
+  }
+
+  .flag-icon {
+    display: flex;
+    align-items: center;
+    border-radius: 2px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  }
+
+  .lang-label {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: var(--text-light);
+    line-height: 1;
+    transition: color 0.2s ease;
+  }
+
+  .lang-chip:hover .lang-label {
+    color: var(--primary);
+  }
+
+  /* GITHUB BUTTON */
   .nav-link.github {
     background: var(--text);
     color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 0.75rem;
+    padding: 0.5rem 1.25rem;
+    border-radius: 100px;
     font-size: 0.85rem;
-    opacity: 1;
   }
-
   .nav-link.github:hover {
     background: #000;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    color: white; /* Щоб синій hover не перебивав */
   }
 
+  /* FOOTER STYLES */
   .site-footer {
     padding: 2.5rem 1rem;
     background-color: var(--card);
     border-top: 1px solid var(--border);
     margin-top: auto;
   }
-
   .footer-content {
     max-width: 1200px;
     margin: 0 auto;
@@ -273,7 +376,6 @@ const { title } = Astro.props;
     align-items: center;
     gap: 0.75rem;
   }
-
   .site-footer p {
     margin: 0;
     display: flex;
@@ -282,66 +384,73 @@ const { title } = Astro.props;
     font-size: 0.95rem;
     font-weight: 600;
   }
-
   .site-footer a {
     color: var(--primary);
     text-decoration: none;
     font-weight: 700;
-    transition: all 0.2s ease;
-    border-bottom: 1px solid transparent;
   }
-
-  .site-footer a:hover {
-    border-bottom-color: var(--primary);
-  }
-
   .footer-divider {
     width: 40px;
     height: 1px;
     background: #e2e8f0;
-    margin: 0.25rem 0;
   }
-
   .copyright {
     font-size: 0.75rem !important;
-    font-weight: 700;
+    opacity: 0.7;
   }
-
   .heart {
-    display: inline-block;
-    font-family: "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
-    font-size: 0.9rem;
-    user-select: none;
+    color: #ef4444;
   }
 
-  .highlight-green {
-    color: #10b981;
-    font-weight: 700;
+  /* TERMINAL HIGHLIGHTS (GLOBAL) */
+  .terminal .highlight-blue {
+    color: #60a5fa;
+    font-weight: bold;
   }
-  .highlight-red {
-    color: #ef4444;
-    font-weight: 700;
+  .terminal .highlight-green {
+    color: #4ade80;
+    font-weight: bold;
   }
-  .highlight-blue {
-    color: #3b82f6;
-    font-weight: 700;
+  .terminal .highlight-red {
+    color: #f87171;
+    font-weight: bold;
+  }
+
+  /* MOBILE RESPONSIVE */
+  @media (max-width: 768px) {
+    .nav-links {
+      gap: 0.75rem;
+    }
+    .lang-picker {
+      padding-left: 0.75rem;
+    }
   }
 
   @media (max-width: 640px) {
     .logo-text {
       font-size: 1.1rem;
     }
-    .nav-link span {
-      display: none;
-    }
-    .nav-link.github {
-      padding: 0.5rem;
+    .nav-link > span:not(.lang-label) {
+      display: none; /* Приховує текст "GitHub" та "Головна", залишаючи іконки */
     }
     .nav-container {
       padding: 0.75rem 1rem;
     }
-    .site-footer {
-      padding: 2rem 1rem;
+    .lang-picker {
+      border-left: none; /* Забираємо лінію на мобільних для економії місця */
+      padding-left: 0;
+      margin-left: 0;
+    }
+    .lang-chip {
+      padding: 6px; /* Робимо кнопку квадратною/круглою */
+      border-radius: 8px;
+    }
+    .lang-label {
+      display: none; /* На телефонах залишаємо тільки прапорець */
+    }
+    .nav-link.github {
+      padding: 0.5rem;
+      border-radius: 8px;
     }
   }
 </style>

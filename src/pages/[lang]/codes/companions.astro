@@ -1,0 +1,351 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import { getLangFromUrl } from "../../../i18n/utils";
+
+export function getStaticPaths() {
+  return [{ params: { lang: "en" } }, { params: { lang: "uk" } }];
+}
+
+const lang = getLangFromUrl(Astro.url);
+
+const pageT = {
+  uk: {
+    title: "Коди-супутники",
+    subtitle:
+      "Інтерактивний інструмент для побудови кодової таблиці та виправлення помилок за допомогою кодів-супутників.",
+    aboutTitle: "📚 Про алгоритм",
+    aboutDesc:
+      "Коди-супутники (компаньйони) — це надлишкові коди, які використовуються для виявлення та виправлення помилок шляхом групування векторів помилок навколо дозволеної кодової комбінації.",
+    principle:
+      "Побудова: У першому рядку розташовується вихідна комбінація. У наступних — результати XOR вихідної комбінації з векторами помилок заданої ваги w.",
+    correction:
+      "Декодування: Якщо прийнята комбінація збігається з одним із кодів-супутників, вона автоматично виправляється до вихідної комбінації цього супутника.",
+    memory:
+      "Особливість: Метод вимагає значного обсягу пам'яті для зберігання таблиці, але забезпечує високу швидкість виправлення за прямим порівнянням.",
+    genTitle: "📋 Побудова кодової таблиці",
+    decodeTitle: "🔓 Декодування повідомлення",
+    origInput: "Вихідна комбінація (V):",
+    errorWeight: "Кратність помилок (w):",
+    receivedInput: "Прийнята комбінація (V'):",
+    maxFixWeight: "Макс. виправних помилок (w):",
+    btnGenerate: "Згенерувати супутники",
+    btnDecode: "Декодувати",
+    placeholderGen: "// Натисніть 'Згенерувати', щоб побудувати таблицю...",
+    placeholderDecode: "// Очікування даних для аналізу...",
+    w1: "w = 1 (Одиночні)",
+    w2: "w = 2 (Подвійні)",
+    w3: "w = 3 (Потрійні)",
+  },
+  en: {
+    title: "Companion Codes",
+    subtitle:
+      "Interactive tool for building code tables and correcting errors using companion (satellite) codes.",
+    aboutTitle: "📚 About Algorithm",
+    aboutDesc:
+      "Companion codes (satellite codes) are redundant codes used to detect and correct errors by grouping error vectors around a valid code combination.",
+    principle:
+      "Construction: The first row contains the original combination. Subsequent rows are XOR results of the original code with error vectors of weight w.",
+    correction:
+      "Decoding: If a received combination matches one of the companion codes, it is automatically corrected to the original combination.",
+    memory:
+      "Feature: This method requires significant memory for table storage but provides high-speed correction via direct comparison.",
+    genTitle: "📋 Code Table Construction",
+    decodeTitle: "🔓 Message Decoding",
+    origInput: "Original Combination (V):",
+    errorWeight: "Error Weight (w):",
+    receivedInput: "Received Combination (V'):",
+    maxFixWeight: "Max Correctable Errors (w):",
+    btnGenerate: "Generate Companions",
+    btnDecode: "Decode",
+    placeholderGen: "// Click 'Generate' to build the table...",
+    placeholderDecode: "// Waiting for data analysis...",
+    w1: "w = 1 (Single)",
+    w2: "w = 2 (Double)",
+    w3: "w = 3 (Triple)",
+  },
+}[lang];
+---
+
+<Layout title={`${pageT.title} — Calculator`}>
+  <main class="main-content">
+    <header class="hero">
+      <h1>{pageT.title}</h1>
+      <p class="description">{pageT.subtitle}</p>
+    </header>
+
+    <section class="theory-card">
+      <h3>{pageT.aboutTitle}</h3>
+      <p>{pageT.aboutDesc}</p>
+      <ul>
+        <li>
+          <strong>{pageT.principle.split(":")[0]}:</strong>
+          {pageT.principle.split(":")[1]}
+        </li>
+        <li>
+          <strong>{pageT.correction.split(":")[0]}:</strong>
+          {pageT.correction.split(":")[1]}
+        </li>
+        <li>
+          <strong>{pageT.memory.split(":")[0]}:</strong>
+          {pageT.memory.split(":")[1]}
+        </li>
+      </ul>
+    </section>
+
+    <div class="container">
+      <h2>{pageT.genTitle}</h2>
+      <div class="grid-layout">
+        <div class="controls">
+          <div class="input-group">
+            <label>{pageT.origInput}</label>
+            <input type="text" id="gen_msg" value="101101" />
+          </div>
+          <div class="input-group">
+            <label>{pageT.errorWeight}</label>
+            <select
+              id="gen_w"
+              style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px;"
+            >
+              <option value="1">{pageT.w1}</option>
+              <option value="2">{pageT.w2}</option>
+              <option value="3">{pageT.w3}</option>
+            </select>
+          </div>
+          <button id="btn_generate">{pageT.btnGenerate}</button>
+        </div>
+        <div id="gen_log" class="terminal">{pageT.placeholderGen}</div>
+      </div>
+    </div>
+
+    <div class="container">
+      <h2>{pageT.decodeTitle}</h2>
+      <div class="grid-layout">
+        <div class="controls">
+          <div class="input-group">
+            <label>{pageT.origInput}</label>
+            <input type="text" id="decode_orig" value="101101" />
+          </div>
+          <div class="input-group">
+            <label>{pageT.receivedInput}</label>
+            <input type="text" id="decode_msg" value="111101" />
+          </div>
+          <div class="input-group">
+            <label>{pageT.maxFixWeight}</label>
+            <input type="number" id="decode_w" value="1" min="1" max="3" />
+          </div>
+          <button id="btn_decode">{pageT.btnDecode}</button>
+        </div>
+        <div id="decode_log" class="terminal">{pageT.placeholderDecode}</div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .main-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+  .hero {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  h1 {
+    color: var(--primary);
+    font-size: 2.8rem;
+    margin-bottom: 10px;
+  }
+  .description {
+    font-size: 1.2rem;
+    color: #64748b;
+  }
+  .theory-card {
+    background: #eff6ff;
+    padding: 25px;
+    border-radius: 12px;
+    border-left: 6px solid var(--primary);
+    margin-bottom: 40px;
+  }
+  .theory-card h3 {
+    margin-top: 0;
+    color: #1e40af;
+  }
+  .container {
+    background: var(--card);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 40px;
+  }
+  .grid-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 30px;
+  }
+  @media (max-width: 900px) {
+    .grid-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+  .input-group {
+    margin-bottom: 20px;
+  }
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #475569;
+  }
+  input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-family: "Courier New", monospace;
+  }
+  button {
+    width: 100%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  button:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+  }
+  .terminal {
+    background: var(--terminal-bg);
+    color: var(--terminal-text);
+    padding: 20px;
+    border-radius: 12px;
+    font-family: "Fira Code", monospace;
+    font-size: 0.9rem;
+    min-height: 250px;
+    white-space: pre-wrap;
+    border: 1px solid #333;
+  }
+</style>
+
+<script define:vars={{ lang }}>
+  const ui = {
+    uk: {
+      errBits: "Помилка: Використовуйте лише 0 та 1",
+      errLen: "Довжини комбінацій повинні збігатися!",
+      startGen: "[*] ПОБУДОВА КОДІВ-СУПУТНИКІВ",
+      found: "Знайдено комбінацій:",
+      tableHead: "Супутник | Вектор помилки (e)",
+      analysis: "[*] АНАЛІЗ ПРИЙНЯТОГО ПОВІДОМЛЕННЯ",
+      matchFound: "[!] Збіг знайдено у списку супутників з w=",
+      errVector: "Вектор помилки:",
+      res: "[*] РЕЗУЛЬТАТ ДЕКОДУВАННЯ:",
+      decoded: "Виправлено до:",
+      notFound: "[ПОМИЛКА] Комбінацію не знайдено серед супутників.",
+      noDistort: "[УСПІХ] Комбінація прийнята без спотворень!",
+    },
+    en: {
+      errBits: "Error: Use only 0 and 1",
+      errLen: "Combination lengths must match!",
+      startGen: "[*] BUILDING COMPANION CODES",
+      found: "Combinations found:",
+      tableHead: "Companion | Error Vector (e)",
+      analysis: "[*] RECEIVED MESSAGE ANALYSIS",
+      matchFound: "[!] Match found in companions list with w=",
+      errVector: "Error vector:",
+      res: "[*] DECODING RESULT:",
+      decoded: "Corrected to:",
+      notFound: "[ERROR] Combination not found in companion list.",
+      noDistort: "[SUCCESS] Combination received without distortion!",
+    },
+  }[lang];
+
+  const getVal = (id) => document.getElementById(id).value;
+  const writeLog = (id, html) => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = html;
+  };
+
+  function getCombinations(arr, k) {
+    let result = [];
+    function combine(start, path) {
+      if (path.length === k) {
+        result.push([...path]);
+        return;
+      }
+      for (let i = start; i < arr.length; i++) {
+        path.push(arr[i]);
+        combine(i + 1, path);
+        path.pop();
+      }
+    }
+    combine(0, []);
+    return result;
+  }
+
+  function generateCompanions(msgStr, w) {
+    const n = msgStr.length;
+    const indices = Array.from({ length: n }, (_, i) => i);
+    const combos = getCombinations(indices, w);
+    return combos.map((combo) => {
+      let arr = msgStr.split("");
+      combo.forEach((idx) => (arr[idx] = arr[idx] === "0" ? "1" : "0"));
+      let errorVector = new Array(n).fill("0");
+      combo.forEach((idx) => (errorVector[idx] = "1"));
+      return { code: arr.join(""), errorVector: errorVector.join("") };
+    });
+  }
+
+  document.getElementById("btn_generate")?.addEventListener("click", () => {
+    const msg = getVal("gen_msg").replace(/\s/g, "");
+    const w = parseInt(getVal("gen_w"));
+    if (!/^[01]+$/.test(msg)) return alert(ui.errBits);
+
+    const companions = generateCompanions(msg, w);
+    let log = `<span class="highlight-blue">${ui.startGen} (w=${w})</span>\n\n`;
+    log += `${ui.found} ${companions.length}\n`;
+    log += `----------------------------------------\n${ui.tableHead}\n----------------------------------------\n`;
+    companions.forEach((c) => (log += `${c.code} | ${c.errorVector}\n`));
+    writeLog("gen_log", log);
+  });
+
+  document.getElementById("btn_decode")?.addEventListener("click", () => {
+    const orig = getVal("decode_orig").replace(/\s/g, "");
+    const rec = getVal("decode_msg").replace(/\s/g, "");
+    const max_w = parseInt(getVal("decode_w"));
+
+    if (orig.length !== rec.length) return alert(ui.errLen);
+
+    let log = `<span class="highlight-blue">${ui.analysis}</span>\n\n`;
+    if (orig === rec) {
+      log += `<span class="highlight-green">${ui.noDistort}</span>`;
+      return writeLog("decode_log", log);
+    }
+
+    let foundMatch = null;
+    let foundW = 0;
+
+    for (let w = 1; w <= max_w; w++) {
+      const comps = generateCompanions(orig, w);
+      const match = comps.find((c) => c.code === rec);
+      if (match) {
+        foundMatch = match;
+        foundW = w;
+        break;
+      }
+    }
+
+    if (foundMatch) {
+      log += `${ui.matchFound}${foundW}\n`;
+      log += `${ui.errVector} <span class="highlight-red">${foundMatch.errorVector}</span>\n\n`;
+      log += `<span class="highlight-green">${ui.res}</span>\n${ui.decoded} ${orig}`;
+    } else {
+      log += `<span class="highlight-red">${ui.notFound}</span>`;
+    }
+    writeLog("decode_log", log);
+  });
+</script>
