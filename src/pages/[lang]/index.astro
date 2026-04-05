@@ -55,6 +55,17 @@ const allCodes = [
     isAvailable: true,
   },
   {
+    name: lang === "uk" ? "Код Еллайеса" : "Elias Code",
+    path: `/${lang}/codes/elias`,
+    description:
+      lang === "uk"
+        ? "Ітеративний матричний код, що використовує перевірку парності рядків та стовпців для виправлення помилок."
+        : "An iterative matrix code using row and column parity checks to correct errors.",
+    category: t("category.error"),
+    icon: "🔲",
+    isAvailable: true,
+  },
+  {
     name: lang === "uk" ? "Код Хеммінга" : "Hamming Code",
     path: "#",
     description:

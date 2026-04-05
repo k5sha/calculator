@@ -1,0 +1,537 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import { getLangFromUrl } from "../../../i18n/utils";
+
+export function getStaticPaths() {
+  return [{ params: { lang: "en" } }, { params: { lang: "uk" } }];
+}
+
+const lang = getLangFromUrl(Astro.url);
+
+const pageT = {
+  uk: {
+    title: "Код Еллайеса",
+    subtitle:
+      "Матричний код з контролем парності для виправлення 1-бітної помилки.",
+    aboutTitle: "📚 Про алгоритм",
+    aboutDesc:
+      "Код Еллайеса (ітеративний код) використовує двовимірний контроль парності. Дані записуються в матрицю, де для кожного рядка та стовпця розраховується додатковий контрольний біт.",
+    principle:
+      "Принцип: Якщо змінюється один біт даних, це призводить до порушення парності одночасно у відповідному рядку та стовпці.",
+    detection:
+      "Виправлення: Точка перетину «помилкового» рядка та стовпця вказує на конкретний біт, який потребує інверсії.",
+    matrixSize: "Розмір матриці:",
+    btnEncode: "Закодувати",
+    btnDecode: "Виправити помилки",
+    btnReset: "Скинути",
+    placeholder: "// Готовність до роботи...",
+    log: {
+      enc: "[*] КОДУВАННЯ: Оновлено біти парності.",
+      dec: "[!] ПЕРЕВІРКА: Шукаємо збої...",
+      none: "[✓] РЕЗУЛЬТАТ: Матриця коректна.",
+      errFound: "[!] ПОМИЛКА: Збій у клітинці",
+      fix: "[+] ВІДНОВЛЕНО: Значення змінено з",
+      to: "на",
+    },
+  },
+  en: {
+    title: "Elias Code",
+    subtitle: "Matrix parity check code for 1-bit error correction.",
+    aboutTitle: "📚 About Algorithm",
+    aboutDesc:
+      "Elias code (iterative code) uses two-dimensional parity check. Data is organized into a matrix where each row and column gets a parity bit.",
+    principle:
+      "Principle: A single bit flip causes a parity violation in both its row and its column simultaneously.",
+    detection:
+      "Correction: The intersection of the 'error' row and 'error' column points to the exact bit that needs flipping.",
+    matrixSize: "Matrix Size:",
+    btnEncode: "Encode",
+    btnDecode: "Fix Errors",
+    btnReset: "Reset",
+    placeholder: "// Ready...",
+    log: {
+      enc: "[*] ENCODING: Parity bits updated.",
+      dec: "[!] CHECKING: Scanning for errors...",
+      none: "[✓] RESULT: Matrix is valid.",
+      errFound: "[!] ERROR: Mismatch at cell",
+      fix: "[+] RESTORED: Value changed from",
+      to: "to",
+    },
+  },
+}[lang];
+---
+
+<Layout title={`${pageT.title} — Lab`}>
+  <main class="main-content">
+    <header class="hero">
+      <h1>{pageT.title}</h1>
+      <p class="description">{pageT.subtitle}</p>
+    </header>
+
+    <section class="theory-card">
+      <h3>{pageT.aboutTitle}</h3>
+      <p>{pageT.aboutDesc}</p>
+      <ul>
+        <li>
+          <strong>{pageT.principle.split(":")[0]}:</strong>
+          {pageT.principle.split(":")[1]}
+        </li>
+        <li>
+          <strong>{pageT.detection.split(":")[0]}:</strong>
+          {pageT.detection.split(":")[1]}
+        </li>
+      </ul>
+    </section>
+
+    <div class="lab-container">
+      <div class="container">
+        <div class="config-bar">
+          <label>{pageT.matrixSize}</label>
+          <select id="matrix_size_select" class="lab-select">
+            <option value="3">3 x 3</option>
+            <option value="4">4 x 4</option>
+            <option value="5" selected>5 x 5</option>
+            <option value="6">6 x 6</option>
+            <option value="8">8 x 8</option>
+          </select>
+        </div>
+
+        <div class="grid-layout">
+          <div class="matrix-side">
+            <div class="matrix-scroll-wrapper">
+              <div id="matrix_grid" class="matrix-grid"></div>
+            </div>
+            <div class="actions-grid">
+              <button id="btn_elias_enc" class="btn-primary"
+                >{pageT.btnEncode}</button
+              >
+              <button id="btn_elias_dec" class="btn-secondary"
+                >{pageT.btnDecode}</button
+              >
+              <button id="btn_elias_reset" class="btn-outline"
+                >{pageT.btnReset}</button
+              >
+            </div>
+          </div>
+
+          <div id="elias_log" class="terminal">{pageT.placeholder}</div>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .main-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+
+  .hero {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  h1 {
+    color: var(--primary);
+    font-size: 2.8rem;
+    margin-bottom: 10px;
+  }
+
+  .description {
+    font-size: 1.2rem;
+    color: #64748b;
+  }
+
+  .theory-card {
+    background: #eff6ff;
+    padding: 25px;
+    border-radius: 12px;
+    border-left: 6px solid var(--primary);
+    margin-bottom: 40px;
+    font-size: 1rem;
+  }
+
+  .theory-card h3 {
+    margin-top: 0;
+    color: #1e40af;
+  }
+
+  .theory-card ul {
+    margin-top: 15px;
+    padding-left: 20px;
+  }
+
+  .container {
+    background: var(--card);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 40px;
+  }
+
+  .grid-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 30px;
+    align-items: start;
+  }
+
+  .config-bar {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+    font-weight: bold;
+    color: #475569;
+  }
+
+  .lab-select {
+    padding: 10px 15px;
+    border-radius: 10px;
+    border: 2px solid #e2e8f0;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  .matrix-side {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .matrix-scroll-wrapper {
+    overflow-x: auto;
+    background: #f1f5f9;
+    padding: 20px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .matrix-grid {
+    display: grid;
+    gap: 8px;
+    width: max-content;
+  }
+
+  :global(.cell-input) {
+    width: 48px;
+    height: 48px;
+    text-align: center;
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 800;
+    border: 2px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 1.3rem;
+    transition: 0.2s;
+  }
+
+  :global(.cell-input:focus) {
+    border-color: var(--primary);
+    outline: none;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+
+  :global(.cell-input.parity) {
+    background: #f8fafc;
+    color: var(--primary);
+    border-color: #94a3b8;
+  }
+
+  :global(.cell-error) {
+    background: #fee2e2 !important;
+    border-color: #ef4444 !important;
+    color: #ef4444;
+    animation: shake 0.3s ease-in-out;
+  }
+
+  @keyframes shake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(-4px);
+    }
+    75% {
+      transform: translateX(4px);
+    }
+  }
+
+  :global(.cell-fixed) {
+    background: #f0fdf4 !important;
+    border-color: #22c55e !important;
+    color: #22c55e;
+  }
+
+  .actions-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  #btn_elias_reset {
+    grid-column: span 2;
+  }
+
+  button {
+    padding: 15px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+    border: none;
+    font-size: 0.95rem;
+  }
+
+  .btn-primary {
+    background: var(--primary);
+    color: white;
+  }
+  .btn-secondary {
+    background: #10b981;
+    color: white;
+  }
+  .btn-outline {
+    background: #fff;
+    border: 2px solid #e2e8f0;
+    color: #64748b;
+  }
+
+  button:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .terminal {
+    background: var(--terminal-bg);
+    color: var(--terminal-text);
+    padding: 25px;
+    border-radius: 12px;
+    font-family: "Fira Code", monospace;
+    font-size: 0.95rem;
+    min-height: 400px;
+    max-height: 500px;
+    white-space: pre-wrap;
+    border: 1px solid #333;
+    overflow-y: auto;
+    line-height: 1.7;
+  }
+
+  :global(.highlight-blue) {
+    color: #60a5fa;
+    font-weight: bold;
+  }
+  :global(.highlight-green) {
+    color: #4ade80;
+    font-weight: bold;
+  }
+  :global(.highlight-red) {
+    color: #f87171;
+    font-weight: bold;
+  }
+
+  @media (max-width: 950px) {
+    .main-content {
+      padding: 20px 15px;
+    }
+
+    .grid-layout {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .container {
+      padding: 15px;
+    }
+    
+    :global(.cell-input) {
+      width: 38px;
+      height: 38px;
+      font-size: 1.1rem;
+      border-radius: 8px;
+    }
+
+    .matrix-grid {
+      gap: 4px;
+    }
+
+    .actions-grid {
+      grid-template-columns: 1fr;
+    }
+
+    #btn_elias_reset {
+      grid-column: span 1;
+    }
+
+    button {
+      padding: 12px;
+      font-size: 0.9rem;
+    }
+
+    .terminal {
+      min-height: 250px;
+      padding: 15px;
+      font-size: 0.85rem;
+    }
+
+    .config-bar {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+  }
+</style>
+
+<script define:vars={{ lang }}>
+  let currentSize = 5;
+  const grid = document.getElementById("matrix_grid");
+  const logEl = document.getElementById("elias_log");
+
+  const ui = {
+    uk: {
+      enc: "[*] КОДУВАННЯ: Оновлено біти парності.",
+      dec: "[!] ПЕРЕВІРКА: Шукаємо збої...",
+      none: "[✓] РЕЗУЛЬТАТ: Матриця коректна.",
+      errFound: "[!] ПОМИЛКА: Збій у клітинці",
+      fix: "[+] ВІДНОВЛЕНО: Значення змінено з",
+      to: "на",
+    },
+    en: {
+      enc: "[*] ENCODING: Parity bits updated.",
+      dec: "[!] CHECKING: Scanning for errors...",
+      none: "[✓] RESULT: Matrix is valid.",
+      errFound: "[!] ERROR: Mismatch at cell",
+      fix: "[+] RESTORED: Value changed from",
+      to: "to",
+    },
+  }[lang];
+
+  function renderMatrix() {
+    const size = parseInt(document.getElementById("matrix_size_select").value);
+    currentSize = size;
+    grid.style.gridTemplateColumns = `repeat(${size + 1}, 1fr)`;
+    grid.innerHTML = "";
+    for (let r = 0; r <= size; r++) {
+      for (let c = 0; c <= size; c++) {
+        const input = document.createElement("input");
+        input.type = "text";
+        input.maxLength = 1;
+        input.className = "cell-input";
+        if (r === size || c === size) input.classList.add("parity");
+        input.dataset.row = r;
+        input.dataset.col = c;
+        input.inputMode = "numeric";
+        input.addEventListener("input", (e) => {
+          if (!/^[01]$/.test(e.target.value)) e.target.value = "";
+          e.target.classList.remove("cell-error", "cell-fixed");
+        });
+        grid.appendChild(input);
+      }
+    }
+  }
+
+  function writeLog(text) {
+    logEl.innerHTML += text + "\n";
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+
+  document.getElementById("btn_elias_enc").addEventListener("click", () => {
+    logEl.innerHTML = `<span class="highlight-blue">${ui.enc}</span>\n`;
+    for (let r = 0; r < currentSize; r++) {
+      let s = 0;
+      for (let c = 0; c < currentSize; c++) {
+        s ^=
+          parseInt(
+            document.querySelector(`[data-row="${r}"][data-col="${c}"]`).value,
+          ) || 0;
+      }
+      document.querySelector(
+        `[data-row="${r}"][data-col="${currentSize}"]`,
+      ).value = s;
+    }
+    for (let c = 0; c <= currentSize; c++) {
+      let s = 0;
+      for (let r = 0; r < currentSize; r++) {
+        s ^=
+          parseInt(
+            document.querySelector(`[data-row="${r}"][data-col="${c}"]`).value,
+          ) || 0;
+      }
+      document.querySelector(
+        `[data-row="${currentSize}"][data-col="${c}"]`,
+      ).value = s;
+    }
+  });
+
+  document.getElementById("btn_elias_dec").addEventListener("click", () => {
+    const m = [];
+    for (let r = 0; r <= currentSize; r++) {
+      const row = [];
+      for (let c = 0; c <= currentSize; c++) {
+        row.push(
+          parseInt(
+            document.querySelector(`[data-row="${r}"][data-col="${c}"]`).value,
+          ) || 0,
+        );
+      }
+      m.push(row);
+    }
+
+    writeLog(`<span class="highlight-blue">${ui.dec}</span>`);
+    let badRow = -1,
+      badCol = -1;
+
+    for (let r = 0; r <= currentSize; r++) {
+      let s = 0;
+      for (let c = 0; c < currentSize; c++) s ^= m[r][c];
+      if (s !== m[r][currentSize]) {
+        badRow = r;
+        break;
+      }
+    }
+    for (let c = 0; c <= currentSize; c++) {
+      let s = 0;
+      for (let r = 0; r < currentSize; r++) s ^= m[r][c];
+      if (s !== m[currentSize][c]) {
+        badCol = c;
+        break;
+      }
+    }
+
+    if (badRow !== -1 && badCol !== -1) {
+      writeLog(
+        `<span class="highlight-red">${ui.errFound} [${badRow + 1}, ${badCol + 1}]</span>`,
+      );
+      const cell = document.querySelector(
+        `[data-row="${badRow}"][data-col="${badCol}"]`,
+      );
+      cell.classList.add("cell-error");
+
+      setTimeout(() => {
+        const oldVal = m[badRow][badCol];
+        const newVal = oldVal ^ 1;
+        cell.value = newVal;
+        cell.classList.replace("cell-error", "cell-fixed");
+        writeLog(
+          `<span class="highlight-green">${ui.fix} ${oldVal} ${ui.to} ${newVal}</span>`,
+        );
+      }, 600);
+    } else {
+      writeLog(`<span class="highlight-green">${ui.none}</span>`);
+    }
+  });
+
+  document
+    .getElementById("matrix_size_select")
+    .addEventListener("change", renderMatrix);
+  document
+    .getElementById("btn_elias_reset")
+    .addEventListener("click", renderMatrix);
+
+  renderMatrix();
+</script>
