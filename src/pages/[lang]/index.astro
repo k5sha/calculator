@@ -45,7 +45,7 @@ const allCodes = [
   },
   {
     name: lang === "uk" ? "Код Шеннона-Фано" : "Shannon-Fano Code",
-    path: `/${lang}/codes/shannon-fano`, 
+    path: `/${lang}/codes/shannon-fano`,
     description:
       lang === "uk"
         ? "Ефективний метод префіксного кодування, що базується на розділенні ймовірностей символів."
@@ -79,6 +79,17 @@ const allCodes = [
     isAvailable: true,
   },
   {
+    name: lang === "uk" ? "Код Хаффмена" : "Huffman Code",
+    path: `/${lang}/codes/huffman`,
+    description:
+      lang === "uk"
+        ? "Алгоритм оптимального префіксного кодування для стиснення без втрат."
+        : "An optimal prefix coding algorithm for lossless data compression.",
+    category: t("category.compression"),
+    icon: "📦",
+    isAvailable: true,
+  },
+  {
     name: lang === "uk" ? "Код Хеммінга" : "Hamming Code",
     path: "#",
     description:
@@ -87,17 +98,6 @@ const allCodes = [
         : "A classic error-correcting code method for data integrity control.",
     category: t("category.systematic"),
     icon: "🛡️",
-    isAvailable: false,
-  },
-  {
-    name: lang === "uk" ? "Код Хаффмена" : "Huffman Code",
-    path: "#",
-    description:
-      lang === "uk"
-        ? "Алгоритм оптимального префіксного кодування для стиснення без втрат."
-        : "An optimal prefix coding algorithm for lossless data compression.",
-    category: t("category.compression"),
-    icon: "📦",
     isAvailable: false,
   },
 ];

@@ -1,0 +1,368 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import { getLangFromUrl } from "../../../i18n/utils";
+
+export function getStaticPaths() {
+  return [{ params: { lang: "en" } }, { params: { lang: "uk" } }];
+}
+
+const lang = getLangFromUrl(Astro.url);
+
+const pageT = {
+  uk: {
+    title: "Код Хаффмана",
+    subtitle:
+      "Побудова оптимального префіксного коду з візуалізацією дерева та таблиці.",
+    aboutTitle: "📚 Про алгоритм",
+    aboutDesc:
+      "Алгоритм Хаффмана будує дерево знизу вгору. На кожному кроці два вузли з найменшими ймовірностями об'єднуються в один батьківський вузол.",
+    principle: "1. Сортування елементів за спаданням ймовірностей.",
+    decoding: "2. Послідовне об'єднання двох найменших значень у суму (Σ).",
+    application: "3. Присвоєння '1' гілці з більшою вагою та '0' з меншою.",
+    sectionEnc: "⚙️ Обчислення",
+    sectionTable: "📊 Таблиця допоміжних груп",
+    binInput: "Символи та ймовірності (A:0.204, B:0.169...):",
+    btnConvert: "Побудувати дерево",
+    placeholder: "// Очікування вводу даних...",
+    err: "Помилка! Перевірте формат: A:0.2, B:0.1",
+  },
+  en: {
+    title: "Huffman Code",
+    subtitle:
+      "Building an optimal prefix code with tree and table visualization.",
+    aboutTitle: "📚 About Algorithm",
+    aboutDesc:
+      "The Huffman algorithm builds a tree from the bottom up. At each step, the two nodes with the lowest probabilities are merged into a single parent node.",
+    principle: "1. Sorting elements by descending probabilities.",
+    decoding:
+      "2. Successive merging of the two smallest values into a sum (Σ).",
+    application:
+      "3. Assigning '1' to the branch with more weight and '0' to the less.",
+    sectionEnc: "⚙️ Calculation",
+    sectionTable: "📊 Auxiliary Groups Table",
+    binInput: "Symbols & Probabilities (A:0.204, B:0.169...):",
+    btnConvert: "Build Tree",
+    placeholder: "// Waiting for input...",
+    err: "Error! Check format: A:0.2, B:0.1",
+  },
+}[lang];
+---
+
+<Layout title={`${pageT.title} — Calculator`}>
+  <main class="main-content">
+    <header class="hero">
+      <h1>{pageT.title}</h1>
+      <p class="description">{pageT.subtitle}</p>
+    </header>
+
+    <section class="theory-card">
+      <h3>{pageT.aboutTitle}</h3>
+      <p>{pageT.aboutDesc}</p>
+      <ul>
+        <li><strong>{pageT.principle}</strong></li>
+        <li><strong>{pageT.decoding}</strong></li>
+        <li><strong>{pageT.application}</strong></li>
+      </ul>
+    </section>
+
+    <div class="container">
+      <h2>{pageT.sectionEnc}</h2>
+      <div class="grid-layout">
+        <div class="controls">
+          <div class="input-group">
+            <label>{pageT.binInput}</label>
+            <textarea id="huffman_input" rows="8"
+              >A:0.204, B:0.169, C:0.160, D:0.134, E:0.134, F:0.102, G:0.064, H:0.015, I:0.011, J:0.007</textarea
+            >
+          </div>
+          <button id="btn_huffman_run">{pageT.btnConvert}</button>
+        </div>
+        <div id="huffman_log" class="terminal">{pageT.placeholder}</div>
+      </div>
+    </div>
+
+    <div id="huff_table_container" class="container" style="display: none;">
+      <h2>{pageT.sectionTable}</h2>
+      <div class="table-wrapper">
+        <table class="huffman-grid">
+          <thead id="huff_thead"></thead>
+          <tbody id="huff_tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .main-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+  .hero {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  h1 {
+    color: var(--primary);
+    font-size: 2.8rem;
+    margin-bottom: 10px;
+  }
+  .description {
+    font-size: 1.2rem;
+    color: #64748b;
+  }
+
+  .theory-card {
+    background: #eff6ff;
+    padding: 25px;
+    border-radius: 12px;
+    border-left: 6px solid var(--primary);
+    margin-bottom: 40px;
+  }
+  .theory-card h3 {
+    margin-top: 0;
+    color: #1e40af;
+  }
+
+  .container {
+    background: var(--card);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 40px;
+  }
+
+  .grid-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 30px;
+  }
+  @media (max-width: 900px) {
+    .grid-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .input-group {
+    margin-bottom: 20px;
+  }
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #475569;
+  }
+
+  textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-family: monospace;
+    font-size: 1rem;
+    box-sizing: border-box;
+    resize: none;
+  }
+
+  button {
+    width: 100%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  button:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+  }
+
+  .terminal {
+    background: var(--terminal-bg);
+    color: var(--terminal-text);
+    padding: 20px;
+    border-radius: 12px;
+    font-family: "Fira Code", monospace;
+    font-size: 0.85rem;
+    min-height: 350px;
+    white-space: pre;
+    border: 1px solid #333;
+    overflow-x: auto;
+  }
+
+  .table-wrapper {
+    overflow-x: auto;
+    margin-top: 20px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+  }
+  .huffman-grid {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: monospace;
+    font-size: 0.9rem;
+  }
+  .huffman-grid th,
+  .huffman-grid td {
+    border: 1px solid #e2e8f0;
+    padding: 10px;
+    text-align: center;
+    min-width: 80px;
+  }
+  .huffman-grid th {
+    background: #f8fafc;
+    color: #475569;
+  }
+
+  /* Виділення як у ТЗ */
+  :global(.highlight-merge) {
+    background: #f1f5f9 !important;
+    color: #94a3b8;
+  }
+  :global(.highlight-result) {
+    background: #fef08a !important;
+    font-weight: bold;
+    color: #854d0e;
+    border: 2px solid #fde047 !important;
+  }
+  :global(.text-blue) {
+    color: #60a5fa;
+    font-weight: bold;
+  }
+  :global(.text-green) {
+    color: #4ade80;
+    font-weight: bold;
+  }
+</style>
+
+<script define:vars={{ lang }}>
+  const ui = {
+    uk: {
+      start: "[*] ПОБУДОВА ДЕРЕВА ХАФФМАНА",
+      tree: "СТРУКТУРА ДЕРЕВА:",
+      final: "ФІНАЛЬНІ КОДИ:",
+      err: "Помилка формату!",
+    },
+    en: {
+      start: "[*] HUFFMAN TREE CONSTRUCTION",
+      tree: "TREE STRUCTURE:",
+      final: "FINAL CODES:",
+      err: "Format Error!",
+    },
+  }[lang];
+
+  document.getElementById("btn_huffman_run")?.addEventListener("click", () => {
+    const inputStr = document.getElementById("huffman_input").value;
+    const logEl = document.getElementById("huffman_log");
+    const thead = document.getElementById("huff_thead");
+    const tbody = document.getElementById("huff_tbody");
+
+    try {
+      let initial = inputStr
+        .split(",")
+        .map((item) => {
+          const [lbl, p] = item.split(":").map((s) => s.trim());
+          return {
+            label: lbl,
+            p: parseFloat(p),
+            id: Math.random().toString(36).substr(2, 7),
+          };
+        })
+        .sort((a, b) => b.p - a.p);
+
+      let ensemble = [...initial.map((d) => ({ ...d }))];
+      let steps = [[...ensemble]];
+      let merges = [];
+
+      while (ensemble.length > 1) {
+        ensemble.sort((a, b) => b.p - a.p);
+        const low1 = ensemble.pop(); 
+        const low2 = ensemble.pop(); 
+
+        const newNode = {
+          label: "Σ",
+          p: parseFloat((low1.p + low2.p).toFixed(3)),
+          id: Math.random().toString(36).substr(2, 7),
+          children: [low2, low1], 
+        };
+
+        merges.push({ merged: [low1.id, low2.id], result: newNode.id });
+        ensemble.push(newNode);
+        ensemble.sort((a, b) => b.p - a.p);
+        steps.push([...ensemble]);
+      }
+
+      thead.innerHTML = `<tr><th>№</th><th>P</th>${merges.map((_, i) => `<th>Гр. ${i + 1}</th>`).join("")}</tr>`;
+      let tableBody = "";
+      for (let r = 0; r < initial.length; r++) {
+        let row = `<td>${r + 1}</td>`;
+        steps.forEach((st, idx) => {
+          const item = st[r];
+          if (!item) row += `<td>-</td>`;
+          else {
+            const isMerging =
+              idx < merges.length && merges[idx].merged.includes(item.id);
+            const isResult = idx > 0 && merges[idx - 1].result === item.id;
+            let cls = isResult
+              ? 'class="highlight-result"'
+              : isMerging
+                ? 'class="highlight-merge"'
+                : "";
+            row += `<td ${cls}>${item.p.toFixed(3)}</td>`;
+          }
+        });
+        tableBody += `<tr>${row}</tr>`;
+      }
+      tbody.innerHTML = tableBody;
+
+      let treeStr = "";
+      function drawTree(node, prefix = "", isLeft = true) {
+        if (!node) return;
+        treeStr +=
+          prefix +
+          (isLeft ? "├── " : "└── ") +
+          (node.label === "Σ"
+            ? `[${node.p.toFixed(3)}]`
+            : `${node.label}(${node.p})`) +
+          "\n";
+        if (node.children) {
+          drawTree(node.children[0], prefix + (isLeft ? "│   " : "    "), true);
+          drawTree(
+            node.children[1],
+            prefix + (isLeft ? "│   " : "    "),
+            false,
+          );
+        }
+      }
+
+      const codes = {};
+      function generateCodes(node, current = "") {
+        if (!node.children) {
+          codes[node.label] = current;
+          return;
+        }
+        generateCodes(node.children[0], current + "1");
+        generateCodes(node.children[1], current + "0");
+      }
+
+      drawTree(ensemble[0], "", false);
+      generateCodes(ensemble[0]);
+
+      let output = `<span class="text-blue">${ui.start}</span>\n\n`;
+      output += `<span class="text-blue">${ui.tree}</span>\n${treeStr}\n`;
+      output += `<span class="text-blue">${ui.final}</span>\n`;
+      initial.forEach((d) => {
+        output += `${d.label}: <span class="text-green">${codes[d.label]}</span>\n`;
+      });
+
+      logEl.innerHTML = output;
+      document.getElementById("huff_table_container").style.display = "block";
+    } catch (e) {
+      alert(ui.err);
+    }
+  });
+</script>
