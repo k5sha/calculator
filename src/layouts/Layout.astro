@@ -85,6 +85,21 @@ const alternateURL = new URL(
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
       }
     </script>
+
+    <script
+      is:inline
+      type="text/partytown"
+      src="https://www.googletagmanager.com/gtag/js?id=G-8H72EK4TMJ"></script>
+
+    <script is:inline type="text/partytown">
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-8H72EK4TMJ");
+    </script>
   </head>
   <body>
     <nav class="navbar">
@@ -425,22 +440,22 @@ const alternateURL = new URL(
       font-size: 1.1rem;
     }
     .nav-link > span:not(.lang-label) {
-      display: none; 
+      display: none;
     }
     .nav-container {
       padding: 0.75rem 1rem;
     }
     .lang-picker {
-      border-left: none; 
+      border-left: none;
       padding-left: 0;
       margin-left: 0;
     }
     .lang-chip {
-      padding: 6px; 
+      padding: 6px;
       border-radius: 8px;
     }
     .lang-label {
-      display: none; 
+      display: none;
     }
     .nav-link.github {
       padding: 0.5rem;
