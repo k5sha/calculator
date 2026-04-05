@@ -1,6 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+import { allCodes } from "../../data/codes";
 
 export function getStaticPaths() {
   return [{ params: { lang: "en" } }, { params: { lang: "uk" } }];
@@ -9,109 +10,14 @@ export function getStaticPaths() {
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 
-const allCodes = [
-  {
-    name: lang === "uk" ? "Рекурентний код" : "Recurrent Code",
-    path: `/${lang}/codes/recurrent`,
-    description:
-      lang === "uk"
-        ? "Потужний алгоритм кодування з використанням регістрів зсуву для виправлення пакетів помилок."
-        : "A powerful coding algorithm using shift registers to correct error bursts.",
-    category: t("category.error"),
-    icon: "🔄",
-    isAvailable: true,
-  },
-  {
-    name: lang === "uk" ? "Коди-супутники" : "Companion Codes",
-    path: `/${lang}/codes/companions`,
-    description:
-      lang === "uk"
-        ? "Метод виправлення помилок за допомогою побудови таблиць супутніх векторів для кодових комбінацій."
-        : "Error correction method using companion vector tables for code combinations.",
-    category: t("category.systematic"),
-    icon: "🛰️",
-    isAvailable: true,
-  },
-  {
-    name: lang === "uk" ? "Код Грея" : "Gray Code",
-    path: `/${lang}/codes/gray`,
-    description:
-      lang === "uk"
-        ? "Мінімальна зміна бітів при переключенні станів. Ідеально для енкодерів."
-        : "Minimal bit change between states. Ideal for rotary encoders.",
-    category: t("category.transform"),
-    icon: "🔢",
-    isAvailable: true,
-  },
-  {
-    name: lang === "uk" ? "Код Шеннона-Фано" : "Shannon-Fano Code",
-    path: `/${lang}/codes/shannon-fano`,
-    description:
-      lang === "uk"
-        ? "Ефективний метод префіксного кодування, що базується на розділенні ймовірностей символів."
-        : "An efficient prefix coding method based on splitting symbol probabilities.",
-    category:
-      t("category.compression") ||
-      (lang === "uk" ? "Стиснення" : "Compression"),
-    icon: "📉",
-    isAvailable: true,
-  },
-  {
-    name: lang === "uk" ? "Двійково-десятковий код" : "Binary-Coded Decimal",
-    path: `/${lang}/codes/bcd`,
-    description:
-      lang === "uk"
-        ? "Перетворення чисел у формат BCD (ДДК) з використанням довільних ваг розрядів для кожної тетради."
-        : "Convert numbers to BCD format using custom bit weights for each nibble.",
-    category: t("category.transform"),
-    icon: "🔢",
-    isAvailable: true,
-  },
-  {
-    name: lang === "uk" ? "Код Еллайеса" : "Elias Code",
-    path: `/${lang}/codes/elias`,
-    description:
-      lang === "uk"
-        ? "Ітеративний матричний код, що використовує перевірку парності рядків та стовпців для виправлення помилок."
-        : "An iterative matrix code using row and column parity checks to correct errors.",
-    category: t("category.error"),
-    icon: "🔲",
-    isAvailable: true,
-  },
-  {
-    name: lang === "uk" ? "Код Хаффмена" : "Huffman Code",
-    path: `/${lang}/codes/huffman`,
-    description:
-      lang === "uk"
-        ? "Алгоритм оптимального префіксного кодування для стиснення без втрат."
-        : "An optimal prefix coding algorithm for lossless data compression.",
-    category: t("category.compression"),
-    icon: "📦",
-    isAvailable: true,
-  },
-  {
-    name: lang === "uk" ? "Ентропія та Інформація" : "Entropy & Information",
-    path: `/${lang}/codes/entropy`,
-    description:
-      lang === "uk"
-        ? "Розрахунок власної інформації символів та безумовної ентропії джерела повідомлень."
-        : "Calculation of self-information and unconditional entropy of a message source.",
-    category: lang === "uk" ? "Аналіз" : "Analysis",
-    icon: "📊",
-    isAvailable: true,
-  },
-  {
-    name: lang === "uk" ? "Код Хеммінга" : "Hamming Code",
-    path: "#",
-    description:
-      lang === "uk"
-        ? "Класичний метод самокоригованих кодів для контролю цілісності даних."
-        : "A classic error-correcting code method for data integrity control.",
-    category: t("category.systematic"),
-    icon: "🛡️",
-    isAvailable: false,
-  },
-];
+const localizedCodes = allCodes.map((code) => ({
+  name: code.name[lang],
+  description: code.description[lang],
+  path: code.path === "#" ? "#" : `/${lang}${code.path}`,
+  category: t(code.categoryKey as any),
+  icon: code.icon,
+  isAvailable: code.isAvailable,
+}));
 ---
 
 <Layout title={t("hero.title")}>
@@ -151,7 +57,7 @@ const allCodes = [
     <div class="grid-container">
       <div class="grid" id="codesGrid">
         {
-          allCodes.map((code) => (
+          localizedCodes.map((code) => (
             <a
               href={code.isAvailable ? code.path : "#"}
               class={`glass-card ${!code.isAvailable ? "is-pending" : ""}`}
