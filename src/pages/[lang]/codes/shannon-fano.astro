@@ -1,0 +1,261 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import { getLangFromUrl } from "../../../i18n/utils";
+
+export function getStaticPaths() {
+  return [{ params: { lang: "en" } }, { params: { lang: "uk" } }];
+}
+
+const lang = getLangFromUrl(Astro.url);
+
+const pageT = {
+  uk: {
+    title: "Код Шеннона-Фано",
+    subtitle:
+      "Інструмент для генерації оптимальних префіксних кодів стиснення.",
+    aboutTitle: "📚 Про алгоритм",
+    aboutDesc:
+      "Метод Шеннона-Фано використовується для побудови кодів з мінімальною надмірністю. Чим вища ймовірність появи символу, тим коротший код йому присвоюється.",
+    principle: "1. Символи сортуються за спаданням ймовірностей.",
+    decoding:
+      "2. Список рекурсивно ділиться на дві частини з максимально близькими сумами ймовірностей.",
+    application: "3. Верхній частині додається префікс '0', нижній — '1'.",
+    sectionEnc: "⚙️ Обчислення",
+    binInput: "Символи та ймовірності (напр. A:0.4, B:0.3):",
+    btnConvert: "Згенерувати код",
+    placeholder: "// Очікування введення даних...",
+  },
+  en: {
+    title: "Shannon-Fano Code",
+    subtitle: "A tool for generating optimal prefix compression codes.",
+    aboutTitle: "📚 About Algorithm",
+    aboutDesc:
+      "The Shannon-Fano method is used to construct codes with minimal redundancy. Higher probability symbols receive shorter binary sequences.",
+    principle: "1. Symbols are sorted by descending probabilities.",
+    decoding:
+      "2. The list is recursively split into two parts with the closest possible total probabilities.",
+    application:
+      "3. The upper part is assigned '0', and the lower part is assigned '1'.",
+    sectionEnc: "⚙️ Calculation",
+    binInput: "Symbols & Probabilities (e.g., A:0.4, B:0.3):",
+    btnConvert: "Generate Code",
+    placeholder: "// Waiting for input...",
+  },
+}[lang];
+---
+
+<Layout title={`${pageT.title} — Calculator`}>
+  <main class="main-content">
+    <header class="hero">
+      <h1>{pageT.title}</h1>
+      <p class="description">{pageT.subtitle}</p>
+    </header>
+
+    <section class="theory-card">
+      <h3>{pageT.aboutTitle}</h3>
+      <p>{pageT.aboutDesc}</p>
+      <ul>
+        <li><strong>{pageT.principle}</strong></li>
+        <li><strong>{pageT.decoding}</strong></li>
+        <li><strong>{pageT.application}</strong></li>
+      </ul>
+    </section>
+
+    <div class="container">
+      <h2>{pageT.sectionEnc}</h2>
+      <div class="grid-layout">
+        <div class="controls">
+          <div class="input-group">
+            <label>{pageT.binInput}</label>
+            <textarea id="shannon_input" rows="6"
+              >A:0.4, B:0.2, C:0.2, D:0.1, E:0.1</textarea
+            >
+          </div>
+          <button id="btn_shannon_run">{pageT.btnConvert}</button>
+        </div>
+        <div id="shannon_log" class="terminal">{pageT.placeholder}</div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .main-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+  .hero {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  h1 {
+    color: var(--primary);
+    font-size: 2.8rem;
+    margin-bottom: 10px;
+  }
+  .description {
+    font-size: 1.2rem;
+    color: #64748b;
+  }
+  .theory-card {
+    background: #eff6ff;
+    padding: 25px;
+    border-radius: 12px;
+    border-left: 6px solid var(--primary);
+    margin-bottom: 40px;
+  }
+  .theory-card h3 {
+    margin-top: 0;
+    color: #1e40af;
+  }
+  .container {
+    background: var(--card);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 40px;
+  }
+  .grid-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 30px;
+  }
+  @media (max-width: 900px) {
+    .grid-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+  .input-group {
+    margin-bottom: 20px;
+  }
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #475569;
+  }
+  textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-family: monospace;
+    font-size: 1rem;
+    box-sizing: border-box;
+    resize: none;
+  }
+  button {
+    width: 100%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  button:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+  }
+  .terminal {
+    background: var(--terminal-bg);
+    color: var(--terminal-text);
+    padding: 20px;
+    border-radius: 12px;
+    font-family: "Fira Code", monospace;
+    font-size: 0.9rem;
+    min-height: 350px;
+    white-space: pre-wrap;
+    border: 1px solid #333;
+    overflow-x: auto;
+  }
+  :global(.highlight-blue) {
+    color: #60a5fa;
+    font-weight: bold;
+  }
+  :global(.highlight-green) {
+    color: #4ade80;
+    font-weight: bold;
+  }
+</style>
+
+<script define:vars={{ lang }}>
+  const ui = {
+    uk: {
+      start: "[*] ГЕНЕРАЦІЯ КОДУ ШЕННОНА-ФАНО",
+      step: "Поділ",
+      final: "ФІНАЛЬНІ КОДОВІ КОМБІНАЦІЇ:",
+      err: "Формат введення невірний. Спробуйте A:0.4, B:0.1",
+    },
+    en: {
+      start: "[*] SHANNON-FANO CODE GENERATION",
+      step: "Split",
+      final: "FINAL BINARY CODES:",
+      err: "Invalid input format. Use A:0.4, B:0.1",
+    },
+  }[lang];
+
+  document.getElementById("btn_shannon_run")?.addEventListener("click", () => {
+    const input = document.getElementById("shannon_input").value;
+    const logEl = document.getElementById("shannon_log");
+
+    try {
+      let symbols = input
+        .split(",")
+        .map((item) => {
+          const [char, prob] = item.split(":").map((s) => s.trim());
+          return { char, prob: parseFloat(prob), code: "" };
+        })
+        .filter((s) => !isNaN(s.prob));
+
+      if (symbols.length === 0) throw new Error();
+
+      symbols.sort((a, b) => b.prob - a.prob);
+
+      let log = `<span class="highlight-blue">${ui.start}</span>\n\n`;
+
+      function solve(list, depth) {
+        if (list.length <= 1) return;
+
+        const total = list.reduce((a, b) => a + b.prob, 0);
+        let accumulated = 0;
+        let splitIdx = 0;
+        let minDiff = Infinity;
+
+        for (let i = 0; i < list.length - 1; i++) {
+          accumulated += list[i].prob;
+          const diff = Math.abs(accumulated - (total - accumulated));
+          if (diff < minDiff) {
+            minDiff = diff;
+            splitIdx = i;
+          }
+        }
+
+        const top = list.slice(0, splitIdx + 1);
+        const bottom = list.slice(splitIdx + 1);
+
+        log += `${"  ".repeat(depth)}|-- ${ui.step}: {${top.map((s) => s.char)}} ← 0 | {${bottom.map((s) => s.char)}} ← 1\n`;
+
+        top.forEach((s) => (s.code += "0"));
+        bottom.forEach((s) => (s.code += "1"));
+
+        solve(top, depth + 1);
+        solve(bottom, depth + 1);
+      }
+
+      solve(symbols, 0);
+
+      log += `\n<span class="highlight-blue">${ui.final}</span>\n`;
+      symbols.forEach((s) => {
+        log += `${s.char}: <span class="highlight-green">${s.code}</span>\n`;
+      });
+
+      logEl.innerHTML = log;
+    } catch (e) {
+      alert(ui.err);
+    }
+  });
+</script>

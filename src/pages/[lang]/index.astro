@@ -44,6 +44,19 @@ const allCodes = [
     isAvailable: true,
   },
   {
+    name: lang === "uk" ? "Код Шеннона-Фано" : "Shannon-Fano Code",
+    path: `/${lang}/codes/shannon-fano`, 
+    description:
+      lang === "uk"
+        ? "Ефективний метод префіксного кодування, що базується на розділенні ймовірностей символів."
+        : "An efficient prefix coding method based on splitting symbol probabilities.",
+    category:
+      t("category.compression") ||
+      (lang === "uk" ? "Стиснення" : "Compression"),
+    icon: "📉",
+    isAvailable: true,
+  },
+  {
     name: lang === "uk" ? "Двійково-десятковий код" : "Binary-Coded Decimal",
     path: `/${lang}/codes/bcd`,
     description:
