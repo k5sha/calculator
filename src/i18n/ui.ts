@@ -8,8 +8,8 @@ export const defaultLang = 'en';
 export const ui = {
   en: {
     // Hero
-    'hero.title': 'List of codes',
-    'hero.subtitle': 'Professional tools for analysis and generation of error-correcting codes in your browser.',
+    'hero.title': 'Error-Correcting Codes Online Tool',
+    'hero.subtitle': 'Advanced playground for data compression, error-correction analysis, and binary transformation algorithms.',
     
     // Info / FAQ Section (Expanded for SEO)
     'info.title': 'Frequently Asked Questions',
@@ -44,8 +44,8 @@ export const ui = {
   },
   uk: {
     // Hero
-    'hero.title': 'Список кодувань',
-    'hero.subtitle': 'Професійні інструменти для аналізу та генерації завадостійких кодів у вашому браузері.',
+    'hero.title': 'Інструменти теорії кодування',
+    'hero.subtitle': 'Професійне середовище для аналізу алгоритмів стиснення, завадостійкого кодування та двійкових перетворень.',
 
     // Info / FAQ Section (Expanded for SEO)
     'info.title': 'Поширені запитання',
