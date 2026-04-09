@@ -11,13 +11,18 @@ const lang = getLangFromUrl(Astro.url);
 const pageT = {
   uk: {
     title: "Про проект",
-    subtitle: "Coding Theory Lab — інтерактивний простір для дослідження цифрової логіки.",
+    subtitle:
+      "Coding Theory Lab — інтерактивний простір для дослідження цифрової логіки.",
     aboutTitle: "📚 Концепція проекту",
-    aboutDesc: "Проект створено для візуалізації складних алгоритмів теорії кодування. Ми прагнемо зробити навчання прозорим, демонструючи кожен крок трансформації даних у реальному часі.",
-    
-    principle: "🔍 Прозорість: Кожен алгоритм супроводжується логом кроків для відстеження логіки.",
-    privacy: "🔒 Автономність: Усі операції виконуються безпосередньо у вашому браузері.",
-    standard: "📖 Стандарти: Реалізація базується на класичних методах Хеммінга, Хаффмана та Грея.",
+    aboutDesc:
+      "Проект створено для візуалізації складних алгоритмів теорії кодування. Ми прагнемо зробити навчання прозорим, демонструючи кожен крок трансформації даних у реальному часі.",
+
+    principle:
+      "🔍 Прозорість: Кожен алгоритм супроводжується логом кроків для відстеження логіки.",
+    privacy:
+      "🔒 Автономність: Усі операції виконуються безпосередньо у вашому браузері.",
+    standard:
+      "📖 Стандарти: Реалізація базується на класичних методах Хеммінга, Хаффмана та Грея.",
 
     sectionMission: "🚀 Місія та Візія",
     sectionStatus: "🛠 Технічний маніфест",
@@ -27,27 +32,33 @@ const pageT = {
       "Goal: Education_via_Visualization",
       "Focus: Algorithmic_Transparency",
       "Status: Active_Development",
-      "Target: Engineering_Students"
+      "Target: Engineering_Students",
     ],
-    
+
     statusLog: [
       "[*] SYSTEM_ENVIRONMENT_REPORT",
       "Version: 1.2.0-stable",
       "Runtime: Client_Side_Execution",
       "Data_Retention: None (Stateless)",
-      "Security: Encrypted_Session"
+      "Security: Encrypted_Session",
     ],
-    footerNote: "Лабораторія відкрита для використання в освітніх та інженерних цілях."
+    footerNote:
+      "Лабораторія відкрита для використання в освітніх та інженерних цілях.",
   },
   en: {
     title: "About Project",
-    subtitle: "Coding Theory Lab — an interactive space for exploring digital logic.",
+    subtitle:
+      "Coding Theory Lab — an interactive space for exploring digital logic.",
     aboutTitle: "📚 Project Concept",
-    aboutDesc: "The project was developed to visualize complex coding theory algorithms. We aim to make learning transparent by demonstrating every step of data transformation in real-time.",
-    
-    principle: "🔍 Transparency: Every algorithm is accompanied by a step log to track the logic.",
-    privacy: "🔒 Autonomy: All operations are performed directly in your browser.",
-    standard: "📖 Standards: Implementation is based on classic Hamming, Huffman, and Gray methods.",
+    aboutDesc:
+      "The project was developed to visualize complex coding theory algorithms. We aim to make learning transparent by demonstrating every step of data transformation in real-time.",
+
+    principle:
+      "🔍 Transparency: Every algorithm is accompanied by a step log to track the logic.",
+    privacy:
+      "🔒 Autonomy: All operations are performed directly in your browser.",
+    standard:
+      "📖 Standards: Implementation is based on classic Hamming, Huffman, and Gray methods.",
 
     sectionMission: "🚀 Mission & Vision",
     sectionStatus: "🛠 Technical Manifesto",
@@ -57,17 +68,17 @@ const pageT = {
       "Goal: Education_via_Visualization",
       "Focus: Algorithmic_Transparency",
       "Status: Active_Development",
-      "Target: Engineering_Students"
+      "Target: Engineering_Students",
     ],
-    
+
     statusLog: [
       "[*] SYSTEM_ENVIRONMENT_REPORT",
       "Version: 1.2.0-stable",
       "Runtime: Client_Side_Execution",
       "Data_Retention: None (Stateless)",
-      "Security: Encrypted_Session"
+      "Security: Encrypted_Session",
     ],
-    footerNote: "The lab is open for educational and engineering purposes."
+    footerNote: "The lab is open for educational and engineering purposes.",
   },
 }[lang];
 ---
@@ -102,22 +113,30 @@ const pageT = {
       <h2>{pageT.sectionMission}</h2>
       <div class="grid-layout">
         <div class="controls info-text">
-          <p>{lang === 'uk' ? 'Ми перетворюємо математичні абстракції на зрозумілі інструменти. Платформа допомагає студентам та розробникам швидше опановувати матеріал через інтерактивний досвід.' : 'We transform mathematical abstractions into clear tools. The platform helps students and developers master the material faster through an interactive experience.'}</p>
+          <p>
+            {
+              lang === "uk"
+                ? "Ми перетворюємо математичні абстракції на зрозумілі інструменти. Платформа допомагає студентам та розробникам швидше опановувати матеріал через інтерактивний досвід."
+                : "We transform mathematical abstractions into clear tools. The platform helps students and developers master the material faster through an interactive experience."
+            }
+          </p>
           <div class="tag-cloud">
-             <span class="tag">#Learning</span>
-             <span class="tag">#Theory</span>
-             <span class="tag">#Digital</span>
+            <span class="tag">#Learning</span>
+            <span class="tag">#Theory</span>
+            <span class="tag">#Digital</span>
           </div>
         </div>
         <div class="terminal">
           <span class="highlight-blue">{pageT.missionLog[0]}</span>
           <br /><br />
-          {pageT.missionLog.slice(1).map(line => (
-            <>
-              <span class="highlight-green">&gt;&gt;</span> {line}
-              <br />
-            </>
-          ))}
+          {
+            pageT.missionLog.slice(1).map((line) => (
+              <>
+                <span class="highlight-green">&gt;&gt;</span> {line}
+                <br />
+              </>
+            ))
+          }
           <span class="blink">_</span>
         </div>
       </div>
@@ -127,22 +146,30 @@ const pageT = {
       <h2>{pageT.sectionStatus}</h2>
       <div class="grid-layout">
         <div class="controls info-text">
-          <p>{lang === 'uk' ? 'Coding Theory Lab побудована на принципах відкритості та швидкості. Ми використовуємо сучасні веб-технології для стабільної роботи без затримок.' : 'Coding Theory Lab is built on the principles of openness and speed. We use modern web technologies for stable performance without delays.'}</p>
+          <p>
+            {
+              lang === "uk"
+                ? "Coding Theory Lab побудована на принципах відкритості та швидкості. Ми використовуємо сучасні веб-технології для стабільної роботи без затримок."
+                : "Coding Theory Lab is built on the principles of openness and speed. We use modern web technologies for stable performance without delays."
+            }
+          </p>
           <hr class="divider" />
           <div class="footer-status">
-             <span class="status-dot"></span>
-             <p>{pageT.footerNote}</p>
+            <span class="status-dot"></span>
+            <p>{pageT.footerNote}</p>
           </div>
         </div>
         <div class="terminal">
           <span class="highlight-blue">{pageT.statusLog[0]}</span>
           <br /><br />
-          {pageT.statusLog.slice(1).map(line => (
-            <>
-              <span class="highlight-green">>></span> {line}
-              <br />
-            </>
-          ))}
+          {
+            pageT.statusLog.slice(1).map((line) => (
+              <>
+                <span class="highlight-green">&gt;&gt;</span> {line}
+                <br />
+              </>
+            ))
+          }
           <span class="blink">_</span>
         </div>
       </div>
@@ -273,6 +300,8 @@ const pageT = {
     color: var(--primary);
   }
   @keyframes blink {
-    50% { opacity: 0; }
+    50% {
+      opacity: 0;
+    }
   }
 </style>
