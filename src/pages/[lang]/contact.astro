@@ -12,10 +12,11 @@ const pageT = {
   uk: {
     title: "Зворотний зв'язок",
     subtitle: "Технічна підтримка та пропозиції щодо розвитку лабораторії.",
-    
+
     cardTitle: "📬 Зв'язатися з розробником",
-    cardDesc: "Маєте питання щодо алгоритмів, знайшли помилку в розрахунках або хочете запропонувати новий функціонал? Пишіть нам на офіційну пошту проекту.",
-    
+    cardDesc:
+      "Маєте питання щодо алгоритмів, знайшли помилку в розрахунках або хочете запропонувати новий функціонал? Пишіть нам на офіційну пошту проекту.",
+
     emailLabel: "Електронна пошта для запитів:",
     responseTitle: "⏳ Час відповіді",
     responseTime: "Зазвичай ми відповідаємо протягом 24-48 годин у робочі дні.",
@@ -25,17 +26,19 @@ const pageT = {
       "Establishing connection to SMTP...",
       "Target: zipzip.tech.help@gmail.com",
       "Status: Ready to receive messages",
-      "Encryption: End-to-End active"
+      "Encryption: End-to-End active",
     ],
-    footerNote: "Ваші дані не передаються третім особам і використовуються лише для відповіді на запит."
+    footerNote:
+      "Ваші дані не передаються третім особам і використовуються лише для відповіді на запит.",
   },
   en: {
     title: "Contact Us",
     subtitle: "Technical support and suggestions for laboratory development.",
-    
+
     cardTitle: "📬 Get in Touch",
-    cardDesc: "Have questions about algorithms, found a calculation error, or want to suggest new features? Email us at our official project address.",
-    
+    cardDesc:
+      "Have questions about algorithms, found a calculation error, or want to suggest new features? Email us at our official project address.",
+
     emailLabel: "Email address for inquiries:",
     responseTitle: "⏳ Response Time",
     responseTime: "We usually respond within 24-48 hours on business days.",
@@ -45,10 +48,11 @@ const pageT = {
       "Establishing connection to SMTP...",
       "Target: zipzip.tech.help@gmail.com",
       "Status: Ready to receive messages",
-      "Encryption: End-to-End active"
+      "Encryption: End-to-End active",
     ],
-    footerNote: "Your data is not shared with third parties and is used only for responding to your inquiry."
-  }
+    footerNote:
+      "Your data is not shared with third parties and is used only for responding to your inquiry.",
+  },
 }[lang];
 ---
 
@@ -64,7 +68,7 @@ const pageT = {
         <section class="contact-card">
           <h3>{pageT.cardTitle}</h3>
           <p>{pageT.cardDesc}</p>
-          
+
           <div class="email-box">
             <span>{pageT.emailLabel}</span>
             <a href="mailto:zipzip.tech.help@gmail.com" class="email-link">
@@ -73,7 +77,10 @@ const pageT = {
           </div>
         </section>
 
-        <section class="theory-card" style="border-left-color: #f59e0b; background: #fffbeb;">
+        <section
+          class="theory-card"
+          style="border-left-color: #f59e0b; background: #fffbeb;"
+        >
           <h3 style="color: #92400e;">{pageT.responseTitle}</h3>
           <p style="color: #78350f;">{pageT.responseTime}</p>
         </section>
@@ -83,16 +90,18 @@ const pageT = {
         <div class="terminal">
           <span class="highlight-blue">{pageT.terminalHeader}</span>
           <br /><br />
-          {pageT.terminalLines.map(line => (
-            <>
-              <span class="highlight-green">>></span> {line}
-              <br />
-            </>
-          ))}
+          {
+            pageT.terminalLines.map((line) => (
+              <>
+                <span class="highlight-green">&gt;&gt;</span> {line}
+                <br />
+              </>
+            ))
+          }
           <br />
           <span class="blink">_</span>
         </div>
-        
+
         <p class="footer-note">{pageT.footerNote}</p>
       </div>
     </div>
@@ -109,9 +118,16 @@ const pageT = {
     text-align: center;
     margin-bottom: 50px;
   }
-  h1 { color: var(--primary); font-size: 2.8rem; margin-bottom: 10px; }
-  .description { font-size: 1.2rem; color: #64748b; }
-  
+  h1 {
+    color: var(--primary);
+    font-size: 2.8rem;
+    margin-bottom: 10px;
+  }
+  .description {
+    font-size: 1.2rem;
+    color: #64748b;
+  }
+
   .grid-layout {
     display: grid;
     grid-template-columns: 1.1fr 0.9fr;
@@ -119,25 +135,35 @@ const pageT = {
     align-items: start;
   }
   @media (max-width: 900px) {
-    .grid-layout { grid-template-columns: 1fr; }
+    .grid-layout {
+      grid-template-columns: 1fr;
+    }
   }
 
   .contact-card {
     background: white;
     padding: 35px;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
     margin-bottom: 30px;
   }
-  .contact-card h3 { margin-bottom: 15px; color: #1e293b; }
-  
+  .contact-card h3 {
+    margin-bottom: 15px;
+    color: #1e293b;
+  }
+
   .email-box {
     margin-top: 25px;
     padding: 20px;
     background: #f1f5f9;
     border-radius: 12px;
   }
-  .email-box span { display: block; font-size: 0.9rem; color: #64748b; margin-bottom: 5px; }
+  .email-box span {
+    display: block;
+    font-size: 0.9rem;
+    color: #64748b;
+    margin-bottom: 5px;
+  }
   .email-link {
     font-size: 1.2rem;
     font-weight: bold;
@@ -145,7 +171,9 @@ const pageT = {
     text-decoration: none;
     word-break: break-all;
   }
-  .email-link:hover { text-decoration: underline; }
+  .email-link:hover {
+    text-decoration: underline;
+  }
 
   .theory-card {
     padding: 25px;
@@ -158,16 +186,32 @@ const pageT = {
     color: #e2e8f0;
     padding: 30px;
     border-radius: 20px;
-    font-family: 'Fira Code', monospace;
+    font-family: "Fira Code", monospace;
     font-size: 0.85rem;
     border: 1px solid #1e293b;
     margin-bottom: 20px;
   }
-  .highlight-blue { color: #38bdf8; font-weight: bold; }
-  .highlight-green { color: #4ade80; }
-  .blink { animation: blink 1s infinite; color: var(--primary); }
-  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-  
+  .highlight-blue {
+    color: #38bdf8;
+    font-weight: bold;
+  }
+  .highlight-green {
+    color: #4ade80;
+  }
+  .blink {
+    animation: blink 1s infinite;
+    color: var(--primary);
+  }
+  @keyframes blink {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+  }
+
   .footer-note {
     font-size: 0.85rem;
     color: #94a3b8;
