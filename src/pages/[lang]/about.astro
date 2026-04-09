@@ -1,0 +1,278 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getLangFromUrl } from "../../i18n/utils";
+
+export function getStaticPaths() {
+  return [{ params: { lang: "en" } }, { params: { lang: "uk" } }];
+}
+
+const lang = getLangFromUrl(Astro.url);
+
+const pageT = {
+  uk: {
+    title: "Про проект",
+    subtitle: "Coding Theory Lab — інтерактивний простір для дослідження цифрової логіки.",
+    aboutTitle: "📚 Концепція проекту",
+    aboutDesc: "Проект створено для візуалізації складних алгоритмів теорії кодування. Ми прагнемо зробити навчання прозорим, демонструючи кожен крок трансформації даних у реальному часі.",
+    
+    principle: "🔍 Прозорість: Кожен алгоритм супроводжується логом кроків для відстеження логіки.",
+    privacy: "🔒 Автономність: Усі операції виконуються безпосередньо у вашому браузері.",
+    standard: "📖 Стандарти: Реалізація базується на класичних методах Хеммінга, Хаффмана та Грея.",
+
+    sectionMission: "🚀 Місія та Візія",
+    sectionStatus: "🛠 Технічний маніфест",
+
+    missionLog: [
+      "[*] INITIALIZING MISSION_PROTOCOL",
+      "Goal: Education_via_Visualization",
+      "Focus: Algorithmic_Transparency",
+      "Status: Active_Development",
+      "Target: Engineering_Students"
+    ],
+    
+    statusLog: [
+      "[*] SYSTEM_ENVIRONMENT_REPORT",
+      "Version: 1.2.0-stable",
+      "Runtime: Client_Side_Execution",
+      "Data_Retention: None (Stateless)",
+      "Security: Encrypted_Session"
+    ],
+    footerNote: "Лабораторія відкрита для використання в освітніх та інженерних цілях."
+  },
+  en: {
+    title: "About Project",
+    subtitle: "Coding Theory Lab — an interactive space for exploring digital logic.",
+    aboutTitle: "📚 Project Concept",
+    aboutDesc: "The project was developed to visualize complex coding theory algorithms. We aim to make learning transparent by demonstrating every step of data transformation in real-time.",
+    
+    principle: "🔍 Transparency: Every algorithm is accompanied by a step log to track the logic.",
+    privacy: "🔒 Autonomy: All operations are performed directly in your browser.",
+    standard: "📖 Standards: Implementation is based on classic Hamming, Huffman, and Gray methods.",
+
+    sectionMission: "🚀 Mission & Vision",
+    sectionStatus: "🛠 Technical Manifesto",
+
+    missionLog: [
+      "[*] INITIALIZING MISSION_PROTOCOL",
+      "Goal: Education_via_Visualization",
+      "Focus: Algorithmic_Transparency",
+      "Status: Active_Development",
+      "Target: Engineering_Students"
+    ],
+    
+    statusLog: [
+      "[*] SYSTEM_ENVIRONMENT_REPORT",
+      "Version: 1.2.0-stable",
+      "Runtime: Client_Side_Execution",
+      "Data_Retention: None (Stateless)",
+      "Security: Encrypted_Session"
+    ],
+    footerNote: "The lab is open for educational and engineering purposes."
+  },
+}[lang];
+---
+
+<Layout title={`${pageT.title} — Info`}>
+  <main class="main-content">
+    <header class="hero">
+      <h1>{pageT.title}</h1>
+      <p class="description">{pageT.subtitle}</p>
+    </header>
+
+    <section class="theory-card">
+      <h3>{pageT.aboutTitle}</h3>
+      <p>{pageT.aboutDesc}</p>
+      <ul>
+        <li>
+          <strong>{pageT.principle.split(":")[0]}:</strong>
+          {pageT.principle.split(":")[1]}
+        </li>
+        <li>
+          <strong>{pageT.privacy.split(":")[0]}:</strong>
+          {pageT.privacy.split(":")[1]}
+        </li>
+        <li>
+          <strong>{pageT.standard.split(":")[0]}:</strong>
+          {pageT.standard.split(":")[1]}
+        </li>
+      </ul>
+    </section>
+
+    <div class="container">
+      <h2>{pageT.sectionMission}</h2>
+      <div class="grid-layout">
+        <div class="controls info-text">
+          <p>{lang === 'uk' ? 'Ми перетворюємо математичні абстракції на зрозумілі інструменти. Платформа допомагає студентам та розробникам швидше опановувати матеріал через інтерактивний досвід.' : 'We transform mathematical abstractions into clear tools. The platform helps students and developers master the material faster through an interactive experience.'}</p>
+          <div class="tag-cloud">
+             <span class="tag">#Learning</span>
+             <span class="tag">#Theory</span>
+             <span class="tag">#Digital</span>
+          </div>
+        </div>
+        <div class="terminal">
+          <span class="highlight-blue">{pageT.missionLog[0]}</span>
+          <br /><br />
+          {pageT.missionLog.slice(1).map(line => (
+            <>
+              <span class="highlight-green">>></span> {line}
+              <br />
+            </>
+          ))}
+          <span class="blink">_</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <h2>{pageT.sectionStatus}</h2>
+      <div class="grid-layout">
+        <div class="controls info-text">
+          <p>{lang === 'uk' ? 'Coding Theory Lab побудована на принципах відкритості та швидкості. Ми використовуємо сучасні веб-технології для стабільної роботи без затримок.' : 'Coding Theory Lab is built on the principles of openness and speed. We use modern web technologies for stable performance without delays.'}</p>
+          <hr class="divider" />
+          <div class="footer-status">
+             <span class="status-dot"></span>
+             <p>{pageT.footerNote}</p>
+          </div>
+        </div>
+        <div class="terminal">
+          <span class="highlight-blue">{pageT.statusLog[0]}</span>
+          <br /><br />
+          {pageT.statusLog.slice(1).map(line => (
+            <>
+              <span class="highlight-green">>></span> {line}
+              <br />
+            </>
+          ))}
+          <span class="blink">_</span>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .main-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+  .hero {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  h1 {
+    color: var(--primary);
+    font-size: 2.8rem;
+    margin-bottom: 10px;
+  }
+  .description {
+    font-size: 1.2rem;
+    color: #64748b;
+  }
+  .theory-card {
+    background: #eff6ff;
+    padding: 25px;
+    border-radius: 12px;
+    border-left: 6px solid var(--primary);
+    margin-bottom: 40px;
+  }
+  .theory-card h3 {
+    margin-top: 0;
+    color: #1e40af;
+  }
+  .theory-card ul {
+    margin-top: 15px;
+    padding-left: 20px;
+    list-style: none;
+  }
+  .theory-card li {
+    margin-bottom: 10px;
+    color: #334155;
+  }
+  .container {
+    background: var(--card);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 40px;
+  }
+  .grid-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 30px;
+  }
+  @media (max-width: 900px) {
+    .grid-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+  .info-text p {
+    color: #475569;
+    line-height: 1.6;
+    font-size: 1rem;
+    margin-bottom: 15px;
+  }
+  .tag-cloud {
+    display: flex;
+    gap: 8px;
+    margin-top: 15px;
+  }
+  .tag {
+    font-size: 0.75rem;
+    background: #f1f5f9;
+    padding: 4px 8px;
+    border-radius: 5px;
+    color: #64748b;
+    font-family: monospace;
+  }
+  .divider {
+    border: 0;
+    border-top: 1px solid #e2e8f0;
+    margin: 20px 0;
+  }
+  .footer-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    background: #4ade80;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #4ade80;
+  }
+  .footer-status p {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #64748b;
+  }
+  .terminal {
+    background: var(--terminal-bg);
+    color: var(--terminal-text);
+    padding: 25px;
+    border-radius: 12px;
+    font-family: "Fira Code", monospace;
+    font-size: 0.85rem;
+    min-height: 180px;
+    white-space: pre-wrap;
+    border: 1px solid #333;
+    line-height: 1.5;
+  }
+  .highlight-blue {
+    color: #60a5fa;
+    font-weight: bold;
+  }
+  .highlight-green {
+    color: #4ade80;
+    font-weight: bold;
+  }
+  .blink {
+    animation: blink 1s infinite;
+    color: var(--primary);
+  }
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+</style>
