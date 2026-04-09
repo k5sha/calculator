@@ -1,0 +1,217 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getLangFromUrl } from "../../i18n/utils";
+
+export function getStaticPaths() {
+  return [{ params: { lang: "en" } }, { params: { lang: "uk" } }];
+}
+
+const lang = getLangFromUrl(Astro.url);
+
+const pageT = {
+  uk: {
+    title: "Політика конфіденційності",
+    subtitle: "Прозорість та безпека ваших даних.",
+
+    section1Title: "🛡️ Приватність за замовчуванням",
+    section1Text:
+      "Coding Theory Lab — це статичний додаток. Це означає, що всі обчислення, кодування та декодування відбуваються виключно у вашому браузері за допомогою JavaScript. Ми не надсилаємо ваші вхідні дані на жоден сервер.",
+
+    section2Title: "📊 Аналітика та Google Analytics",
+    section2Text:
+      "Ми використовуємо Google Analytics (через Partytown для оптимізації) лише для збору анонімної статистики: кількість відвідувачів, типи пристроїв та популярні сторінки. Це допомагає нам розуміти, які функції калькулятора найбільш затребувані.",
+
+    section3Title: "🍪 Файли Cookie",
+    section3Text:
+      "Ми використовуємо мінімальну кількість cookies для збереження налаштувань мови та роботи аналітики. Ви можете вимкнути їх у налаштуваннях браузера, це не вплине на роботу обчислювальних функцій.",
+
+    section4Title: "📂 Відкритий код",
+    section4Text:
+      "Весь код проекту доступний на GitHub. Ви можете самостійно перевірити, як обробляються ваші дані та переконатися у відсутності прихованих механізмів збору інформації.",
+
+    terminalHeader: "[*] PRIVACY_PROTOCOL: ACTIVE",
+    dataLoc: "Data_Location",
+    dataLocVal: "Client_Side (Browser)",
+    encryption: "Transmission",
+    encryptionVal: "HTTPS_Only",
+    storage: "Server_Storage",
+    storageVal: "None (Zero_Knowledge)",
+  },
+  en: {
+    title: "Privacy Policy",
+    subtitle: "Transparency and security of your data.",
+
+    section1Title: "🛡️ Privacy by Design",
+    section1Text:
+      "Coding Theory Lab is a static application. This means all calculations, encoding, and decoding happen exclusively in your browser via JavaScript. We do not send your input data to any server.",
+
+    section2Title: "📊 Analytics & Google Analytics",
+    section2Text:
+      "We use Google Analytics (via Partytown for optimization) only to collect anonymous statistics: visitor count, device types, and popular pages. This helps us understand which calculator features are most in demand.",
+
+    section3Title: "🍪 Cookies",
+    section3Text:
+      "We use a minimal amount of cookies to save your language preferences and support analytics. You can disable them in your browser settings; this will not affect the calculation functions.",
+
+    section4Title: "📂 Open Source",
+    section4Text:
+      "The entire project code is available on GitHub. You can independently verify how your data is processed and ensure there are no hidden data collection mechanisms.",
+
+    terminalHeader: "[*] PRIVACY_PROTOCOL: ACTIVE",
+    dataLoc: "Data_Location",
+    dataLocVal: "Client_Side (Browser)",
+    encryption: "Transmission",
+    encryptionVal: "HTTPS_Only",
+    storage: "Server_Storage",
+    storageVal: "None (Zero_Knowledge)",
+  },
+}[lang];
+---
+
+<Layout title={`${pageT.title} — Coding Theory Lab`}>
+  <main class="main-content">
+    <header class="hero">
+      <h1>{pageT.title}</h1>
+      <p class="description">{pageT.subtitle}</p>
+    </header>
+
+    <div class="grid-container">
+      <div class="privacy-sections">
+        <section class="info-block">
+          <h3>{pageT.section1Title}</h3>
+          <p>{pageT.section1Text}</p>
+        </section>
+
+        <section class="info-block">
+          <h3>{pageT.section2Title}</h3>
+          <p>{pageT.section2Text}</p>
+        </section>
+
+        <section class="info-block">
+          <h3>{pageT.section3Title}</h3>
+          <p>{pageT.section3Text}</p>
+        </section>
+
+        <section class="info-block">
+          <h3>{pageT.section4Title}</h3>
+          <p>{pageT.section4Text}</p>
+        </section>
+      </div>
+
+      <aside class="side-panel">
+        <div class="terminal">
+          <span class="highlight-blue">{pageT.terminalHeader}</span>
+          <br /><br />
+          <span class="highlight-green">&gt;&gt;</span>
+          {pageT.dataLoc}:
+          <br />&nbsp;&nbsp;&nbsp;{pageT.dataLocVal}
+          <br /><br />
+          <span class="highlight-green">&gt;&gt;</span>
+          {pageT.encryption}:
+          <br />&nbsp;&nbsp;&nbsp;{pageT.encryptionVal}
+          <br /><br />
+          <span class="highlight-green">&gt;&gt;</span>
+          {pageT.storage}:
+          <br />&nbsp;&nbsp;&nbsp;<span class="highlight-red"
+            >{pageT.storageVal}</span
+          >
+          <br /><br />
+          <span class="highlight-blue">[*] COMPLIANCE:</span> GDPR_Ready
+          <br />
+          <span class="blink">_</span>
+        </div>
+      </aside>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .main-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 20px;
+  }
+  .hero {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+  h1 {
+    color: var(--primary);
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+  }
+  .description {
+    font-size: 1.1rem;
+    color: var(--text-light);
+  }
+  .grid-container {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 40px;
+    align-items: start;
+  }
+  .info-block {
+    background: var(--card);
+    padding: 30px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    margin-bottom: 25px;
+    transition: transform 0.2s ease;
+  }
+  .info-block:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  }
+  .info-block h3 {
+    margin-top: 0;
+    color: var(--text);
+    font-size: 1.25rem;
+    margin-bottom: 15px;
+  }
+  .info-block p {
+    color: #475569;
+    line-height: 1.7;
+    margin: 0;
+  }
+  .terminal {
+    background: var(--terminal-bg);
+    color: var(--terminal-text);
+    padding: 30px;
+    border-radius: 16px;
+    font-family: "Fira Code", monospace;
+    font-size: 0.85rem;
+    border: 1px solid #333;
+    position: sticky;
+    top: 100px;
+  }
+  .highlight-blue {
+    color: #60a5fa;
+    font-weight: bold;
+  }
+  .highlight-green {
+    color: #4ade80;
+    font-weight: bold;
+  }
+  .highlight-red {
+    color: #f87171;
+    font-weight: bold;
+  }
+  .blink {
+    animation: blink 1s infinite;
+    color: var(--primary);
+  }
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  @media (max-width: 968px) {
+    .grid-container {
+      grid-template-columns: 1fr;
+    }
+    .terminal {
+      position: static;
+    }
+  }
+</style>

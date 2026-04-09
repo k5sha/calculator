@@ -13,8 +13,13 @@ const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 
 const navT = {
-  uk: { home: "Головна", about: "Про проєкт", contact: "Контакти" },
-  en: { home: "Home", about: "About", contact: "Contact" },
+  uk: {
+    home: "Головна",
+    about: "Про проєкт",
+    contact: "Контакти",
+    privacy: "Приватність",
+  },
+  en: { home: "Home", about: "About", contact: "Contact", privacy: "Privacy" },
 }[lang];
 
 const canonicalURL = new URL(
@@ -201,11 +206,11 @@ const alternateURL = new URL(
       <footer class="site-footer">
         <div class="footer-content">
           <nav class="footer-nav">
-            <a href={`/${lang}/`} class="footer-link">{navT.home}</a>
-            <span class="footer-dot">•</span>
             <a href={`/${lang}/about/`} class="footer-link">{navT.about}</a>
             <span class="footer-dot">•</span>
             <a href={`/${lang}/contact/`} class="footer-link">{navT.contact}</a>
+            <span class="footer-dot">•</span>
+            <a href={`/${lang}/privacy`} class="footer-link">{navT.privacy}</a>
           </nav>
 
           <p class="developed-by">
