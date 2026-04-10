@@ -33,6 +33,17 @@ export const allCodes: CodeItem[] = [
     isAvailable: true,
   },
   {
+    name: { uk: "Код Варшамова", en: "Varshamov Code" },
+    path: "/codes/varshamov",
+    description: {
+      uk: "Систематичний лінійний код, що будується на основі твірної матриці для виправлення заданої кількості помилок.",
+      en: "A systematic linear code built on a generator matrix designed to correct a specific number of errors."
+    },
+    categoryKey: "category.systematic",
+    icon: "🏗️",
+    isAvailable: true,
+  },
+  {
     name: { uk: "Коди-супутники", en: "Companion Codes" },
     path: "/codes/companions",
     description: {

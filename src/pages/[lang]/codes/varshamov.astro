@@ -1,0 +1,654 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import { getLangFromUrl } from "../../../i18n/utils";
+
+export function getStaticPaths() {
+  return [{ params: { lang: "en" } }, { params: { lang: "uk" } }];
+}
+
+const lang = getLangFromUrl(Astro.url);
+
+const pageT = {
+  uk: {
+    title: "Код Варшамова",
+    subtitle: "Систематичний код з динамічним розрахунком r та k.",
+    aboutTitle: "📚 Про алгоритм",
+    aboutDesc:
+      "Код Варшамова будується на основі заданої довжини n та мінімальної відстані d. Кількість перевірних розрядів r визначається з нерівності, а виправлення t помилок базується на обчисленні синдромів.",
+    principle:
+      "Розрахунок: Кількість рядків матриці G дорівнює k = n - r, де r знаходиться з умови 2^r > 1 + Σ C(n-1, i).",
+    detection:
+      "Виправлення: Синдром вказує на конкретний стовпець перевірної матриці H, який відповідає позиції помилки.",
+    labelN: "Довжина (n):",
+    labelD: "Відстань (d):",
+    btnApply: "Застосувати",
+    btnEncode: "Закодувати",
+    btnDecode: "Перевірити",
+    placeholder: "",
+    headers: {
+      g: "Твірна матриця G (k × n)",
+      h: "Перевірна матриця H (r × n)",
+      u: "Вхідні дані (U)",
+      v: "Кодове слово (V)",
+    },
+  },
+  en: {
+    title: "Varshamov Code",
+    subtitle: "Systematic code with dynamic r and k calculation.",
+    aboutTitle: "📚 About Algorithm",
+    aboutDesc:
+      "Varshamov code is built based on a given length n and minimum distance d. The number of parity bits r is found using an inequality, and t errors are corrected via syndromes.",
+    principle:
+      "Calculation: G matrix rows k = n - r, where r is found via 2^r > 1 + Σ C(n-1, i).",
+    detection:
+      "Correction: The syndrome points to a specific column in the parity-check matrix H corresponding to the error position.",
+    labelN: "Length (n):",
+    labelD: "Distance (d):",
+    btnApply: "Apply",
+    btnEncode: "Encode",
+    btnDecode: "Check",
+    placeholder: "",
+    headers: {
+      g: "Generator Matrix G (k × n)",
+      h: "Parity Matrix H (r × n)",
+      u: "Input Data (U)",
+      v: "Code Word (V)",
+    },
+  },
+}[lang];
+---
+
+<Layout title={`${pageT.title} — Lab`}>
+  <main class="main-content">
+    <header class="hero">
+      <h1>{pageT.title}</h1>
+      <p class="description">{pageT.subtitle}</p>
+    </header>
+
+    <section class="theory-card">
+      <h3>{pageT.aboutTitle}</h3>
+      <p>{pageT.aboutDesc}</p>
+      <ul>
+        <li>
+          <strong>{pageT.principle.split(":")[0]}:</strong>
+          {pageT.principle.split(":")[1]} 
+        </li>
+        <li>
+          <strong>{pageT.detection.split(":")[0]}:</strong>
+          {pageT.detection.split(":")[1]} 
+        </li>
+      </ul>
+    </section>
+
+    <div class="lab-container">
+      <div class="container">
+        <div class="config-bar">
+          <label>{pageT.labelN}</label>
+          <input
+            type="number"
+            id="param_n"
+            value="7"
+            min="3"
+            max="15"
+            class="lab-select param-input"
+          />
+          <label>{pageT.labelD}</label>
+          <input
+            type="number"
+            id="param_d"
+            value="3"
+            min="3"
+            max="5"
+            class="lab-select param-input"
+          />
+          <button id="btn_apply" class="btn-outline">{pageT.btnApply}</button>
+        </div>
+
+        <div class="grid-layout">
+          <div class="matrix-side">
+            <div class="matrix-scroll-wrapper column-flex">
+              <div class="section-title">{pageT.headers.g}</div>
+              <div id="matrix_g_grid" class="matrix-grid"></div>
+
+              <div class="section-title mt-3">{pageT.headers.h}</div>
+              <div id="matrix_h_grid" class="matrix-grid"></div>
+            </div>
+
+            <div class="matrix-scroll-wrapper column-flex">
+              <div class="section-title">{pageT.headers.u}</div>
+              <div id="input_grid" class="matrix-grid"></div>
+
+              <div class="section-title mt-3">{pageT.headers.v}</div>
+              <div id="output_grid" class="matrix-grid"></div>
+            </div>
+
+            <div class="actions-grid">
+              <button id="btn_encode" class="btn-primary"
+                >{pageT.btnEncode}</button
+              >
+              <button id="btn_decode" class="btn-secondary"
+                >{pageT.btnDecode}</button
+              >
+            </div>
+          </div>
+
+          <div id="varshamov_log" class="terminal">{pageT.placeholder}</div>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .main-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+  .hero {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  h1 {
+    color: var(--primary);
+    font-size: 2.8rem;
+    margin-bottom: 10px;
+  }
+  .description {
+    font-size: 1.2rem;
+    color: #64748b;
+  }
+
+  .theory-card {
+    background: #eff6ff;
+    padding: 25px;
+    border-radius: 12px;
+    border-left: 6px solid var(--primary);
+    margin-bottom: 40px;
+    font-size: 1rem;
+  }
+  .theory-card h3 {
+    margin-top: 0;
+    color: #1e40af;
+  }
+  .theory-card ul {
+    margin-top: 15px;
+    padding-left: 20px;
+  }
+
+  .container {
+    background: var(--card);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 40px;
+  }
+
+  .grid-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 30px;
+    align-items: start;
+  }
+
+  .config-bar {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+    font-weight: bold;
+    color: #475569;
+  }
+  .lab-select {
+    padding: 10px 15px;
+    border-radius: 10px;
+    border: 2px solid #e2e8f0;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  .param-input {
+    width: 80px;
+    text-align: center;
+    font-family: "JetBrains Mono", monospace;
+  }
+
+  .matrix-side {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .matrix-scroll-wrapper {
+    overflow-x: auto;
+    background: #f1f5f9;
+    padding: 20px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: flex-start;
+  }
+  .column-flex {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .section-title {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: #64748b;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .mt-3 {
+    margin-top: 20px;
+  }
+
+  .matrix-grid {
+    display: grid;
+    gap: 8px;
+    width: max-content;
+  }
+
+  :global(.cell-input) {
+    width: 48px;
+    height: 48px;
+    text-align: center;
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 800;
+    border: 2px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 1.3rem;
+    transition: 0.2s;
+  }
+  :global(.cell-input:focus) {
+    border-color: var(--primary);
+    outline: none;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+  :global(.cell-input.parity) {
+    background: #f8fafc;
+    color: var(--primary);
+    border-color: #94a3b8;
+  }
+  :global(.cell-input.output-bit) {
+    background: white;
+    border-color: #94a3b8;
+  }
+
+  :global(.cell-error) {
+    background: #fee2e2 !important;
+    border-color: #ef4444 !important;
+    color: #ef4444;
+    animation: shake 0.3s ease-in-out;
+  }
+  @keyframes shake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(-4px);
+    }
+    75% {
+      transform: translateX(4px);
+    }
+  }
+  :global(.cell-fixed) {
+    background: #f0fdf4 !important;
+    border-color: #22c55e !important;
+    color: #22c55e;
+  }
+
+  .actions-grid {
+    display: flex;
+    gap: 12px;
+  }
+  button {
+    padding: 15px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+    border: none;
+    font-size: 0.95rem;
+    flex: 1;
+  }
+  .btn-primary {
+    background: var(--primary);
+    color: white;
+  }
+  .btn-secondary {
+    background: #10b981;
+    color: white;
+  }
+  .btn-outline {
+    background: #fff;
+    border: 2px solid #e2e8f0;
+    color: #64748b;
+    padding: 10px 20px;
+  }
+  button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .terminal {
+    background: var(--terminal-bg);
+    color: var(--terminal-text);
+    padding: 25px;
+    border-radius: 12px;
+    font-family: "Fira Code", monospace;
+    font-size: 0.9rem;
+    min-height: 400px;
+    max-height: 600px;
+    white-space: pre-wrap;
+    border: 1px solid #333;
+    overflow-y: auto;
+    line-height: 1.7;
+  }
+
+  :global(.highlight-blue) {
+    color: #60a5fa;
+    font-weight: bold;
+  }
+  :global(.highlight-green) {
+    color: #4ade80;
+    font-weight: bold;
+  }
+  :global(.highlight-red) {
+    color: #f87171;
+    font-weight: bold;
+  }
+  :global(.highlight-yellow) {
+    color: #fcd34d;
+    font-weight: bold;
+  }
+
+  @media (max-width: 950px) {
+    .grid-layout {
+      grid-template-columns: 100%; 
+      display: block;
+    }
+
+    .main-content {
+      padding: 20px 10px;
+      overflow-x: hidden; 
+    }
+
+    .container {
+      padding: 15px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .scroll-container {
+      overflow-x: auto !important;
+      display: block;
+      max-width: 100%;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 15px;
+    }
+
+    :global(.cell-input) {
+      width: 36px;
+      height: 36px;
+      font-size: 1.1rem;
+    }
+
+    .config-bar {
+      flex-wrap: wrap;
+      justify-content: flex-start;
+    }
+
+    .actions-grid {
+      flex-direction: column;
+    }
+
+    .terminal {
+      min-height: 300px;
+      margin-top: 20px;
+    }
+  }
+</style>
+
+<script define:vars={{ lang }}>
+  const ui = {
+    uk: {
+      enc: "[*] КОДУВАННЯ: V = U × G",
+      dec: "[!] ПЕРЕВІРКА: Обчислення синдромів...",
+      none: "[✓] РЕЗУЛЬТАТ: Помилок не виявлено (S=0).",
+      errFound: "[!] ПОМИЛКА: Збій у розряді №",
+      fix: "[+] ВІДНОВЛЕНО: Значення змінено з",
+      to: "на",
+      math: "РОЗРАХУНОК",
+      calcR: "Обчислення r: 2^r > 1 + Σ C(n-1, i)",
+      calcK: "Обчислення k: k = n - r",
+      calcT: "Виправляється помилок (t):",
+      errParams:
+        "[!] Помилка: Неприпустимі параметри (k <= 0). Зменшіть d або збільшіть n.",
+      errNotFound:
+        "[!] Помилка: Синдром не знайдено в H. Можливо, кількість помилок перевищує t.",
+    },
+    en: {
+      enc: "[*] ENCODING: V = U × G",
+      dec: "[!] CHECKING: Calculating syndromes...",
+      none: "[✓] RESULT: Matrix is valid (S=0).",
+      errFound: "[!] ERROR: Mismatch at bit #",
+      fix: "[+] RESTORED: Value changed from",
+      to: "to",
+      math: "MATH",
+      calcR: "Calculating r: 2^r > 1 + Σ C(n-1, i)",
+      calcK: "Calculating k: k = n - r",
+      calcT: "Correctable errors (t):",
+      errParams:
+        "[!] Error: Invalid parameters (k <= 0). Decrease d or increase n.",
+      errNotFound: "[!] Error: Syndrome not found in H. Errors might exceed t.",
+    },
+  }[lang];
+
+  let n = 7,
+    d = 3,
+    r = 3,
+    k = 4,
+    t = 1;
+
+  const fact = (num) => (num <= 1 ? 1 : num * fact(num - 1));
+  const C = (n, i) => (i > n || i < 0 ? 0 : fact(n) / (fact(i) * fact(n - i)));
+
+  const logEl = document.getElementById("varshamov_log");
+
+  function writeLog(text) {
+    logEl.innerHTML += text + "\n";
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+
+  function clearLog() {
+    logEl.innerHTML = "";
+  }
+
+  const defaultG = [
+    [1, 0, 0, 0, 0, 1, 1],
+    [0, 1, 0, 0, 1, 0, 1],
+    [0, 0, 1, 0, 1, 1, 0],
+    [0, 0, 0, 1, 1, 1, 1],
+  ];
+  const defaultH = [
+    [0, 1, 1, 1, 1, 0, 0],
+    [1, 0, 1, 1, 0, 1, 0],
+    [1, 1, 0, 1, 0, 0, 1],
+  ];
+
+  function calculateParams() {
+    clearLog();
+    n = parseInt(document.getElementById("param_n").value);
+    d = parseInt(document.getElementById("param_d").value);
+
+    let sumC = 0;
+    for (let i = 1; i <= d - 2; i++) sumC += C(n - 1, i);
+    let target = 1 + sumC;
+
+    r = 1;
+    while (Math.pow(2, r) <= target) r++;
+    k = n - r;
+    t = Math.floor((d - 1) / 2);
+
+    logEl.innerHTML = `<span class="highlight-yellow">[*] ${ui.math}: n=${n}, d=${d}</span>\n`;
+    writeLog(
+      `>> ${ui.calcR} => 2^r > ${target} => <span class="highlight-green">r = ${r}</span>`,
+    );
+    writeLog(
+      `>> ${ui.calcK} = ${n} - ${r} = <span class="highlight-green">${k}</span>`,
+    );
+    writeLog(`>> ${ui.calcT} <span class="highlight-green">${t}</span>\n`);
+
+    if (k <= 0) {
+      writeLog(`<span class="highlight-red">${ui.errParams}</span>`);
+      return;
+    }
+    renderGrids();
+  }
+
+  function renderGrids() {
+    const gGrid = document.getElementById("matrix_g_grid");
+    const hGrid = document.getElementById("matrix_h_grid");
+    const uGrid = document.getElementById("input_grid");
+    const vGrid = document.getElementById("output_grid");
+
+    gGrid.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
+    hGrid.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
+    uGrid.style.gridTemplateColumns = `repeat(${k}, 1fr)`;
+    vGrid.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
+
+    gGrid.innerHTML = "";
+    hGrid.innerHTML = "";
+    uGrid.innerHTML = "";
+    vGrid.innerHTML = "";
+
+    const isDefault = n === 7 && d === 3;
+
+    for (let i = 0; i < k; i++) {
+      for (let j = 0; j < n; j++) {
+        let val = isDefault ? defaultG[i][j] : i === j ? 1 : 0;
+        gGrid.innerHTML += `<input type="text" class="cell-input g-cell ${j >= k ? "parity" : ""}" data-r="${i}" data-c="${j}" value="${val}" maxlength="1">`;
+      }
+    }
+
+    for (let i = 0; i < r; i++) {
+      for (let j = 0; j < n; j++) {
+        let val = isDefault ? defaultH[i][j] : j - k === i ? 1 : 0;
+        hGrid.innerHTML += `<input type="text" class="cell-input h-cell ${j >= k ? "parity" : ""}" data-r="${i}" data-c="${j}" value="${val}" maxlength="1">`;
+      }
+    }
+
+    for (let i = 0; i < k; i++) {
+      let val = isDefault ? [1, 0, 1, 0][i] : 0;
+      uGrid.innerHTML += `<input type="text" class="cell-input u-cell" data-c="${i}" value="${val}" maxlength="1">`;
+    }
+
+    for (let i = 0; i < n; i++) {
+      vGrid.innerHTML += `<input type="text" class="cell-input v-cell output-bit" data-c="${i}" value="0" maxlength="1">`;
+    }
+
+    document.querySelectorAll(".cell-input").forEach((inp) => {
+      inp.addEventListener("input", (e) => {
+        if (!/^[01]$/.test(e.target.value)) e.target.value = "0";
+        e.target.classList.remove("cell-error", "cell-fixed");
+      });
+    });
+  }
+
+  function getMatrix(selector, rows, cols) {
+    const m = [];
+    const inputs = document.querySelectorAll(selector);
+    for (let r = 0; r < rows; r++) {
+      const row = [];
+      for (let c = 0; c < cols; c++)
+        row.push(parseInt(inputs[r * cols + c].value) || 0);
+      m.push(row);
+    }
+    return m;
+  }
+
+  document.getElementById("btn_encode").addEventListener("click", () => {
+    if (k <= 0) return;
+    clearLog();
+    const G = getMatrix(".g-cell", k, n);
+    const U = getMatrix(".u-cell", 1, k)[0];
+    const V = new Array(n).fill(0);
+
+    for (let j = 0; j < n; j++) {
+      for (let i = 0; i < k; i++) V[j] ^= U[i] & G[i][j];
+    }
+
+    const vInputs = document.querySelectorAll(".v-cell");
+    V.forEach((bit, idx) => {
+      vInputs[idx].value = bit;
+      vInputs[idx].classList.remove("cell-error", "cell-fixed");
+    });
+    writeLog(
+      `<span class="highlight-blue">${ui.enc}</span>\n>> [${V.join(" ")}]`,
+    );
+  });
+
+  document.getElementById("btn_decode").addEventListener("click", () => {
+    if (k <= 0) return;
+    clearLog();
+    const H = getMatrix(".h-cell", r, n);
+    const V = getMatrix(".v-cell", 1, n)[0];
+    const S = new Array(r).fill(0);
+
+    for (let i = 0; i < r; i++) {
+      for (let j = 0; j < n; j++) S[i] ^= V[j] & H[i][j];
+    }
+
+    writeLog(
+      `<span class="highlight-blue">${ui.dec}</span>\n>> S = [${S.join(" ")}]`,
+    );
+    const sStr = S.join("");
+
+    if (sStr === "0".repeat(r)) {
+      writeLog(`<span class="highlight-green">${ui.none}</span>`);
+    } else {
+      let errCol = -1;
+      for (let j = 0; j < n; j++) {
+        let match = true;
+        for (let i = 0; i < r; i++) {
+          if (H[i][j] !== S[i]) {
+            match = false;
+            break;
+          }
+        }
+        if (match) {
+          errCol = j;
+          break;
+        }
+      }
+
+      if (errCol !== -1) {
+        writeLog(
+          `<span class="highlight-red">${ui.errFound} ${errCol + 1}</span>`,
+        );
+        const cell = document.querySelector(`.v-cell[data-c="${errCol}"]`);
+        cell.classList.add("cell-error");
+
+        setTimeout(() => {
+          const oldVal = V[errCol];
+          const newVal = oldVal ^ 1;
+          cell.value = newVal;
+          cell.classList.replace("cell-error", "cell-fixed");
+          writeLog(
+            `<span class="highlight-green">${ui.fix} ${oldVal} ${ui.to} ${newVal}</span>`,
+          );
+        }, 600);
+      } else {
+        writeLog(`<span class="highlight-red">${ui.errNotFound}</span>`);
+      }
+    }
+  });
+
+  document
+    .getElementById("btn_apply")
+    .addEventListener("click", calculateParams);
+
+  calculateParams();
+</script>
