@@ -3,9 +3,11 @@ import { getLangFromUrl, useTranslations } from "../i18n/utils";
 
 interface Props {
   title: string;
+  keywords: string;
+  description: string;
 }
 
-const { title } = Astro.props;
+const { title, keywords, description } = Astro.props;
 
 const siteBase = Astro.site || "https://calculator.k5sha.xyz";
 
@@ -47,7 +49,8 @@ const alternateURL = new URL(
 
     <title>{title} | Coding Theory Lab</title>
     <meta name="title" content={`${title} | Coding Theory Lab`} />
-    <meta name="description" content={t("hero.subtitle")} />
+    <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
     <meta name="author" content="k5sha" />
     <link rel="canonical" href={canonicalURL} />
 
@@ -127,7 +130,7 @@ const alternateURL = new URL(
           <span class="logo-text">Coding Theory <span>Lab</span></span>
         </a>
         <div class="nav-links">
-          <a href={`/${lang}/`} class="nav-link">
+          <a href={`/${lang}/`} class="nav-link home">
             {lang === "uk" ? "Головна" : "Home"}
           </a>
 
@@ -483,6 +486,10 @@ const alternateURL = new URL(
     .logo-text {
       font-size: 1.1rem;
     }
+    .home {
+      display: none;
+    }
+    
     .nav-link > span:not(.lang-label) {
       display: none;
     }

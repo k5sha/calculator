@@ -56,9 +56,23 @@ const pageT = {
     },
   },
 }[lang];
+
+const varshamovKeywords =
+  lang === "uk"
+    ? "код варшамова, межа варшамова-гільберта, лінійні коди, калькулятор завадостійкого кодування, перевірна матриця h, твірна матриця g, теорія кодування кпі, алгоритми виправлення помилок, онлайн"
+    : "varshamov code, varshamov-gilbert bound, linear block codes, error correction calculator, parity check matrix H, generator matrix G, coding theory lab, interactive engineering tools, online";
+
+const varshamovDescription =
+  lang === "uk"
+    ? "Інтерактивний тренажер коду Варшамова: динамічний розрахунок параметрів n, d, r, k. Генерація матриць G та H, покрокове кодування та візуалізація виправлення помилок через синдроми."
+    : "Interactive Varshamov code simulator: dynamic calculation of n, d, r, k parameters. Matrix generation (G, H), step-by-step encoding, and error correction visualization via syndromes.";
 ---
 
-<Layout title={`${pageT.title} — Lab`}>
+<Layout
+  title={`${pageT.title} — Coding Theory Lab`}
+  description={varshamovDescription}
+  keywords={varshamovKeywords}
+>
   <main class="main-content">
     <header class="hero">
       <h1>{pageT.title}</h1>
@@ -71,11 +85,11 @@ const pageT = {
       <ul>
         <li>
           <strong>{pageT.principle.split(":")[0]}:</strong>
-          {pageT.principle.split(":")[1]} 
+          {pageT.principle.split(":")[1]}
         </li>
         <li>
           <strong>{pageT.detection.split(":")[0]}:</strong>
-          {pageT.detection.split(":")[1]} 
+          {pageT.detection.split(":")[1]}
         </li>
       </ul>
     </section>
@@ -366,13 +380,13 @@ const pageT = {
 
   @media (max-width: 950px) {
     .grid-layout {
-      grid-template-columns: 100%; 
+      grid-template-columns: 100%;
       display: block;
     }
 
     .main-content {
       padding: 20px 10px;
-      overflow-x: hidden; 
+      overflow-x: hidden;
     }
 
     .container {

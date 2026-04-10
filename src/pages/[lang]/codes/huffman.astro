@@ -46,9 +46,23 @@ const pageT = {
     err: "Error! Check format: A:0.2, B:0.1",
   },
 }[lang];
+
+const huffmanKeywords =
+  lang === "uk"
+    ? "алгоритм хаффмана, калькулятор хаффмана, оптимальне префіксне кодування, дерево хаффмана, стиснення без втрат, теорія інформації кпі, побудова дерева кодування, онлайн"
+    : "huffman coding calculator, huffman tree visualization, optimal prefix code, lossless compression, information theory, huffman algorithm online, coding tree builder, online";
+
+const huffmanDescription =
+  lang === "uk"
+    ? "Інтерактивний калькулятор коду Хаффмана: візуалізація побудови дерева знизу вгору, таблиця об'єднання ймовірностей та генерація оптимальних бінарних кодів."
+    : "Interactive Huffman coding calculator: visualize bottom-up tree construction, probability merging table, and optimal binary code generation.";
 ---
 
-<Layout title={`${pageT.title} — Calculator`}>
+<Layout
+  title={`${pageT.title} — Data Compression Tool`}
+  description={huffmanDescription}
+  keywords={huffmanKeywords}
+>
   <main class="main-content">
     <header class="hero">
       <h1>{pageT.title}</h1>
@@ -72,7 +86,8 @@ const pageT = {
           <div class="input-group">
             <label>{pageT.binInput}</label>
             <textarea id="huffman_input" rows="8"
-              >A:0.204, B:0.169, C:0.160, D:0.134, E:0.134, F:0.102, G:0.064, H:0.015, I:0.011, J:0.007</textarea
+              >A:0.204, B:0.169, C:0.160, D:0.134, E:0.134, F:0.102, G:0.064,
+              H:0.015, I:0.011, J:0.007</textarea
             >
           </div>
           <button id="btn_huffman_run">{pageT.btnConvert}</button>
@@ -280,14 +295,14 @@ const pageT = {
 
       while (ensemble.length > 1) {
         ensemble.sort((a, b) => b.p - a.p);
-        const low1 = ensemble.pop(); 
-        const low2 = ensemble.pop(); 
+        const low1 = ensemble.pop();
+        const low2 = ensemble.pop();
 
         const newNode = {
           label: "Σ",
           p: parseFloat((low1.p + low2.p).toFixed(3)),
           id: Math.random().toString(36).substr(2, 7),
-          children: [low2, low1], 
+          children: [low2, low1],
         };
 
         merges.push({ merged: [low1.id, low2.id], result: newNode.id });

@@ -49,9 +49,23 @@ const pageT = {
     placeholder: "// Waiting for input...",
   },
 }[lang];
+
+const grayKeywords =
+  lang === "uk"
+    ? "код грея, перетворення коду грея, двійковий код у грей, карти карно, енкодери, цифрова логіка, теорія інформації кпі, калькулятор коду грея, онлайн"
+    : "gray code converter, binary to gray code, gray to binary, digital logic, rotary encoders, karnaugh maps, gray code calculator online, bitwise xor gray code, online";
+
+const grayDescription =
+  lang === "uk"
+    ? "Онлайн-конвертер коду Грея: перетворення двійкових послідовностей у код Грея та навпаки з детальним поясненням кожного кроку XOR-обчислень."
+    : "Gray code online converter: convert binary sequences to Gray code and vice versa with detailed step-by-step XOR calculation logs.";
 ---
 
-<Layout title={`${pageT.title} — Calculator`}>
+<Layout
+  title={`${pageT.title} — Digital Logic Lab`}
+  description={grayDescription}
+  keywords={grayKeywords}
+>
   <main class="main-content">
     <header class="hero">
       <h1>{pageT.title}</h1>

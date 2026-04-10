@@ -54,9 +54,23 @@ const pageT = {
       "Your data is not shared with third parties and is used only for responding to your inquiry.",
   },
 }[lang];
+
+const contactKeywords =
+  lang === "uk"
+    ? "контакти, зворотний зв'язок, технічна підтримка, теорія кодування, повідомити про помилку, співпраця"
+    : "contact us, feedback, technical support, coding theory, report a bug, suggestions";
+
+const contactDescription =
+  lang === "uk"
+    ? "Зв'яжіться з розробниками Coding Theory Lab для технічної підтримки, пропозицій або звіту про помилки в алгоритмах."
+    : "Get in touch with Coding Theory Lab developers for technical support, feature suggestions, or bug reports.";
 ---
 
-<Layout title={`${pageT.title} — Coding Theory Lab`}>
+<Layout
+  title={`${pageT.title} — Coding Theory Lab`}
+  description={contactDescription}
+  keywords={contactKeywords}
+>
   <main class="main-content">
     <header class="hero">
       <h1>{pageT.title}</h1>

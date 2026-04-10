@@ -18,9 +18,23 @@ const localizedCodes = allCodes.map((code) => ({
   icon: code.icon,
   isAvailable: code.isAvailable,
 }));
+
+const algorithmNames = localizedCodes
+  .filter((code) => code.isAvailable)
+  .map((code) => code.name)
+  .join(", ");
+
+const pageKeywords =
+  lang === "uk"
+    ? `теорія кодування, завадостійке кодування, ${algorithmNames}, калькулятор онлайн, кпі, фіот, системне програмування, кодування джерела, циклічні коди, матриця G, матриця H, синдромне декодування, перевірна матриця, побудова коду варшамова, лінійні коди, завадостійкість, алгоритми стиснення`
+    : `coding theory, error correction codes, ${algorithmNames}, online calculator, data compression, kpi kiev, information theory lab, binary codes, generator matrix, parity check matrix, linear block codes, hamming distance, syndrome decoding, source coding, channel coding, varshamov bound, systematic coding`;
 ---
 
-<Layout title={t("hero.title")}>
+<Layout
+  title={t("hero.title")}
+  description={t("hero.subtitle")}
+  keywords={pageKeywords}
+>
   <div class="main-wrapper">
     <header class="hero-section">
       <h1>Coding Theory <span>Lab</span></h1>

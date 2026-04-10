@@ -59,9 +59,23 @@ const pageT = {
     },
   },
 }[lang];
+
+const eliasKeywords =
+  lang === "uk"
+    ? "код еллайєса, ітеративний код, контроль парності, виправлення помилок, матричний код, теорія інформації кпі, двовимірний код парності, завадостійке кодування, онлайн"
+    : "elias code, iterative code, parity check matrix, error correction code, 2D parity check, information theory lab, forward error correction, matrix bit correction, online";
+
+const eliasDescription =
+  lang === "uk"
+    ? "Інтерактивний симулятор коду Еллайєса: побудова матриці парності, виявлення та автоматичне виправлення поодиноких помилок за допомогою ітеративного алгоритму."
+    : "Interactive Elias code simulator: construct a parity matrix, detect and automatically fix single-bit errors using a 2D parity check algorithm.";
 ---
 
-<Layout title={`${pageT.title} — Lab`}>
+<Layout
+  title={`${pageT.title} — Error Correction Lab`}
+  description={eliasDescription}
+  keywords={eliasKeywords}
+>
   <main class="main-content">
     <header class="hero">
       <h1>{pageT.title}</h1>
@@ -348,7 +362,7 @@ const pageT = {
     .container {
       padding: 15px;
     }
-    
+
     :global(.cell-input) {
       width: 38px;
       height: 38px;

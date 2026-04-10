@@ -3,10 +3,7 @@ import Layout from "../../../layouts/Layout.astro";
 import { getLangFromUrl } from "../../../i18n/utils";
 
 export function getStaticPaths() {
-  return [
-    { params: { lang: 'en' } },
-    { params: { lang: 'uk' } },
-  ];
+  return [{ params: { lang: "en" } }, { params: { lang: "uk" } }];
 }
 
 const lang = getLangFromUrl(Astro.url);
@@ -61,9 +58,23 @@ const pageT = {
     placeholderDecode: "// Waiting for data analysis...",
   },
 }[lang];
+
+const recurrentKeywords =
+  lang === "uk"
+    ? "рекурентний код, завадостійке кодування, систематичні коди, виправлення помилок, теорія кодування, циклічні коди, кпі, цифровий зв'язок, онлайн"
+    : "recurrent code, error correction, error-correcting codes, systematic codes, coding theory lab, digital communication, xor encoding, bits correction, online";
+
+const recurrentDescription =
+  lang === "uk"
+    ? "Інтерактивний калькулятор рекурентного коду з кроком k: покрокове кодування через XOR, обчислення синдрому помилки та автоматичне відновлення інформаційних бітів."
+    : "Interactive recurrent code calculator with step k: step-by-step XOR encoding, error syndrome calculation, and automatic restoration of information bits.";
 ---
 
-<Layout title={`${pageT.title} — Calculator`}>
+<Layout
+  title={`${pageT.title} — Coding Theory Lab`}
+  description={recurrentDescription}
+  keywords={recurrentKeywords}
+>
   <main class="main-content">
     <header class="hero">
       <h1>{pageT.title}</h1>

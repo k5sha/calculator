@@ -66,9 +66,23 @@ const pageT = {
     storageVal: "None (Zero_Knowledge)",
   },
 }[lang];
+
+const privacyKeywords =
+  lang === "uk"
+    ? "політика конфіденційності, захист даних, безпека, open source, без збору даних, gdpr"
+    : "privacy policy, data protection, security, open source, no tracking, gdpr compliance";
+
+const privacyDescription =
+  lang === "uk"
+    ? "Дізнайтеся, як Coding Theory Lab захищає ваші дані: обчислення в браузері, відкритий код та повна прозорість."
+    : "Learn how Coding Theory Lab protects your data: client-side calculations, open source code, and full transparency.";
 ---
 
-<Layout title={`${pageT.title} — Coding Theory Lab`}>
+<Layout
+  title={`${pageT.title} — Coding Theory Lab`}
+  description={privacyDescription}
+  keywords={privacyKeywords}
+>
   <main class="main-content">
     <header class="hero">
       <h1>{pageT.title}</h1>

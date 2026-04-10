@@ -64,9 +64,21 @@ const pageT = {
     w3: "w = 3 (Triple)",
   },
 }[lang];
+
+const companionKeywords = lang === "uk"
+  ? "коди-супутники, коди-компаньйони, вектори помилок, виправлення помилок таблицею, теорія інформації кпі, надлишкові коди, XOR кодування, вага помилки w, онлайн"
+  : "companion codes, satellite codes, error vectors, lookup table error correction, information theory lab, redundant coding, binary error correction, weight w error, online";
+
+const companionDescription = lang === "uk"
+  ? "Інструмент для генерації таблиць кодів-супутників: аналіз векторів помилок заданої ваги та швидке декодування повідомлень шляхом прямого порівняння."
+  : "Tool for generating companion code tables: error vector analysis of a given weight w and high-speed message decoding via direct table comparison.";
 ---
 
-<Layout title={`${pageT.title} — Calculator`}>
+<Layout 
+  title={`${pageT.title} — Error Vector Lab`}
+  description={companionDescription}
+  keywords={companionKeywords}
+>
   <main class="main-content">
     <header class="hero">
       <h1>{pageT.title}</h1>

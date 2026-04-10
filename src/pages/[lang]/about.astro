@@ -81,9 +81,23 @@ const pageT = {
     footerNote: "The lab is open for educational and engineering purposes.",
   },
 }[lang];
+
+const aboutKeywords =
+  lang === "uk"
+    ? "про проект, теорія кодування, візуалізація алгоритмів, навчання, системне програмування, цифрова логіка, кпі"
+    : "about project, coding theory, algorithm visualization, education, digital logic, systems programming, engineering tools";
+
+const aboutDescription =
+  lang === "uk"
+    ? "Дізнайтеся більше про місію Coding Theory Lab: створення прозорого та зрозумілого середовища для вивчення складних алгоритмів цифрової логіки."
+    : "Learn more about the Coding Theory Lab mission: creating a transparent and intuitive environment for studying complex digital logic algorithms.";
 ---
 
-<Layout title={`${pageT.title} — Info`}>
+<Layout
+  title={`${pageT.title} — Coding Theory Lab`}
+  description={aboutDescription}
+  keywords={aboutKeywords}
+>
   <main class="main-content">
     <header class="hero">
       <h1>{pageT.title}</h1>

@@ -49,9 +49,23 @@ const pageT = {
     placeholder: "// Waiting for input...",
   },
 }[lang];
+
+const entropyKeywords =
+  lang === "uk"
+    ? "ентропія шеннона, кількість інформації, безумовна ентропія, умовна ентропія, теорія інформації кпі, калькулятор ентропії, ймовірність подій, надмірність джерела, онлайн"
+    : "shannon entropy calculator, information amount, unconditional entropy, conditional entropy, information theory lab, uncertainty measure, probability distribution, source redundancy, online";
+
+const entropyDescription =
+  lang === "uk"
+    ? "Професійний інструмент для розрахунку інформаційних характеристик: власна інформація події, середня ентропія ансамблю та аналіз умовної ентропії за матрицею ймовірностей."
+    : "Professional tool for calculating information characteristics: self-information, average ensemble entropy, and conditional entropy analysis using probability matrices.";
 ---
 
-<Layout title={`${pageT.title} — Lab`}>
+<Layout
+  title={`${pageT.title} — Information Theory Core`}
+  description={entropyDescription}
+  keywords={entropyKeywords}
+>
   <main class="main-content">
     <header class="hero">
       <h1>{pageT.title}</h1>

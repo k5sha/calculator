@@ -54,9 +54,23 @@ const pageT = {
     placeholder: "// Waiting for input...",
   },
 }[lang];
+
+const bcdKeywords =
+  lang === "uk"
+    ? "двійково-десятковий код, BCD кодування, тетради, ваги розрядів 8-4-2-1, перетворення bcd в десяткове, теорія інформації кпі, калькулятор bcd, ддк кодування, онлайн"
+    : "binary-coded decimal, BCD encoding calculator, 4-bit nibbles, bit weights 8-4-2-1, bcd to decimal converter, information theory lab, decimal to bcd, weighted codes, online";
+
+const bcdDescription =
+  lang === "uk"
+    ? "Інструмент для прямого та зворотного перетворення BCD кодів. Підтримка довільних ваг тетрад, візуалізація процесу кодування кожної цифри та аналіз заборонених станів."
+    : "Tool for direct and reverse BCD transformation. Supports custom nibble weights, visualizes the encoding process for each digit, and analyzes forbidden states.";
 ---
 
-<Layout title={`${pageT.title} — Calculator`}>
+<Layout
+  title={`${pageT.title} — BCD Lab`}
+  description={bcdDescription}
+  keywords={bcdKeywords}
+>
   <main class="main-content">
     <header class="hero">
       <h1>{pageT.title}</h1>

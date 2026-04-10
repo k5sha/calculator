@@ -42,9 +42,23 @@ const pageT = {
     placeholder: "// Waiting for input...",
   },
 }[lang];
+
+const shannonKeywords =
+  lang === "uk"
+    ? "код шеннона-фано, стиснення даних, префіксні коди, теорія інформації, оптимальне кодування, калькулятор шеннона-фано, алгоритми стиснення, кпі, онлайн"
+    : "shannon-fano coding, data compression, prefix codes, information theory, optimal coding calculator, shannon-fano algorithm, compression algorithms online";
+
+const shannonDescription =
+  lang === "uk"
+    ? "Онлайн калькулятор коду Шеннона-Фано: побудова дерева кодування, розрахунок кодів для символів на основі їх ймовірностей та візуалізація процесу рекурсивного поділу."
+    : "Shannon-Fano coding online calculator: build a coding tree, calculate binary codes based on probabilities, and visualize the recursive splitting process.";
 ---
 
-<Layout title={`${pageT.title} — Calculator`}>
+<Layout
+  title={`${pageT.title} — Online Calculator`}
+  description={shannonDescription}
+  keywords={shannonKeywords}
+>
   <main class="main-content">
     <header class="hero">
       <h1>{pageT.title}</h1>
