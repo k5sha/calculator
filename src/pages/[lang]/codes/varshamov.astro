@@ -262,6 +262,10 @@ const varshamovDescription =
     width: max-content;
   }
 
+  #input_grid,
+  #output_grid {
+    grid-auto-flow: column;
+  }
   :global(.cell-input) {
     width: 48px;
     height: 48px;
@@ -428,241 +432,242 @@ const varshamovDescription =
 <script define:vars={{ lang }}>
   const ui = {
     uk: {
-      enc: "[*] КОДУВАННЯ: V = U × G",
-      dec: "[!] ПЕРЕВІРКА: Обчислення синдромів...",
+      encStart: "[*] ПРОЦЕС КОДУВАННЯ (V = U × G)",
+      decStart: "[!] ПРОЦЕС ДЕКОДУВАННЯ (S = V × Hᵀ)",
       none: "[✓] РЕЗУЛЬТАТ: Помилок не виявлено (S=0).",
-      errFound: "[!] ПОМИЛКА: Збій у розряді №",
-      fix: "[+] ВІДНОВЛЕНО: Значення змінено з",
+      errFound: "[!] ВИЯВЛЕНО ПОМИЛКУ: Аномалія у розряді №",
+      fix: "[+] КОРЕКЦІЯ: Інверсія біта з",
       to: "на",
-      math: "РОЗРАХУНОК",
-      calcR: "Обчислення r: 2^r > 1 + Σ C(n-1, i)",
-      calcK: "Обчислення k: k = n - r",
-      calcT: "Виправляється помилок (t):",
-      errParams:
-        "[!] Помилка: Неприпустимі параметри (k <= 0). Зменшіть d або збільшіть n.",
-      errNotFound:
-        "[!] Помилка: Синдром не знайдено в H. Можливо, кількість помилок перевищує t.",
+      math: "АНАЛІЗ ПАРАМЕТРІВ (МЕЖА ВАРШАМОВА)",
+      calcR: "Крок 1: Перевірні розряди (r):",
+      calcK: "Крок 2: Інформаційні розряди (k):",
+      calcT: "Крок 3: Здатність до виправлення (t):",
+      errParams: "[!] КРИТИЧНА ПОМИЛКА: Параметри k <= 0. Змініть n або d.",
+      errNotFound: "[!] ПОМИЛКА: Синдром не знайдено. Помилок більше ніж t.",
+      stepXor: "XOR-сума з рядком",
+      inputU: "Вхідний вектор U",
+      resV: "Сформовано кодове слово V",
+      calcS: "Обчислений синдром S",
+      final: "РЕЗУЛЬТАТ:",
     },
     en: {
-      enc: "[*] ENCODING: V = U × G",
-      dec: "[!] CHECKING: Calculating syndromes...",
-      none: "[✓] RESULT: Matrix is valid (S=0).",
-      errFound: "[!] ERROR: Mismatch at bit #",
-      fix: "[+] RESTORED: Value changed from",
+      encStart: "[*] ENCODING PROCESS (V = U × G)",
+      decStart: "[!] DECODING PROCESS (S = V × Hᵀ)",
+      none: "[✓] RESULT: No errors detected (S=0).",
+      errFound: "[!] ERROR DETECTED: Mismatch at bit position #",
+      fix: "[+] CORRECTION: Bit inverted from",
       to: "to",
-      math: "MATH",
-      calcR: "Calculating r: 2^r > 1 + Σ C(n-1, i)",
-      calcK: "Calculating k: k = n - r",
-      calcT: "Correctable errors (t):",
-      errParams:
-        "[!] Error: Invalid parameters (k <= 0). Decrease d or increase n.",
-      errNotFound: "[!] Error: Syndrome not found in H. Errors might exceed t.",
+      math: "PARAMETER ANALYSIS (VARSHAMOV BOUND)",
+      calcR: "Step 1: Parity bits (r):",
+      calcK: "Step 2: Information bits (k):",
+      calcT: "Step 3: Correction capability (t):",
+      errParams: "[!] CRITICAL ERROR: Invalid parameters (k <= 0).",
+      errNotFound: "[!] ERROR: Syndrome not found. Errors exceed t.",
+      stepXor: "XOR-sum with row",
+      inputU: "Input vector U",
+      resV: "Formed codeword V",
+      calcS: "Calculated syndrome S",
+      final: "RESULT:",
     },
   }[lang];
 
-  let n = 7,
-    d = 3,
-    r = 3,
-    k = 4,
-    t = 1;
+  let n, d, r, k, t;
 
   const fact = (num) => (num <= 1 ? 1 : num * fact(num - 1));
   const C = (n, i) => (i > n || i < 0 ? 0 : fact(n) / (fact(i) * fact(n - i)));
 
-  const logEl = document.getElementById("varshamov_log");
-
-  function writeLog(text) {
-    logEl.innerHTML += text + "\n";
-    logEl.scrollTop = logEl.scrollHeight;
-  }
-
-  function clearLog() {
-    logEl.innerHTML = "";
-  }
-
-  const defaultG = [
-    [1, 0, 0, 0, 0, 1, 1],
-    [0, 1, 0, 0, 1, 0, 1],
-    [0, 0, 1, 0, 1, 1, 0],
-    [0, 0, 0, 1, 1, 1, 1],
-  ];
-  const defaultH = [
-    [0, 1, 1, 1, 1, 0, 0],
-    [1, 0, 1, 1, 0, 1, 0],
-    [1, 1, 0, 1, 0, 0, 1],
-  ];
-
   function calculateParams() {
-    clearLog();
     n = parseInt(document.getElementById("param_n").value);
     d = parseInt(document.getElementById("param_d").value);
-
-    let sumC = 0;
-    for (let i = 1; i <= d - 2; i++) sumC += C(n - 1, i);
-    let target = 1 + sumC;
-
-    r = 1;
-    while (Math.pow(2, r) <= target) r++;
-    k = n - r;
     t = Math.floor((d - 1) / 2);
 
-    logEl.innerHTML = `<span class="highlight-yellow">[*] ${ui.math}: n=${n}, d=${d}</span>\n`;
-    writeLog(
-      `>> ${ui.calcR} => 2^r > ${target} => <span class="highlight-green">r = ${r}</span>`,
-    );
-    writeLog(
-      `>> ${ui.calcK} = ${n} - ${r} = <span class="highlight-green">${k}</span>`,
-    );
-    writeLog(`>> ${ui.calcT} <span class="highlight-green">${t}</span>\n`);
+    let sumC = 0;
+    for (let i = 0; i <= d - 2; i++) sumC += C(n - 1, i);
+
+    r = 1;
+    while (Math.pow(2, r) <= sumC) r++;
+    k = n - r;
+
+    const log = document.getElementById("varshamov_log");
+    log.innerHTML = `<span class="highlight-blue">${ui.math}</span>\n`;
+    log.innerHTML += `${ui.calcR}  2^${r} > 1 + ${sumC}\n`;
+    log.innerHTML += `${ui.calcK}  ${k} = ${n} - ${r}\n`;
+    log.innerHTML += `${ui.calcT}  ${t}\n`;
 
     if (k <= 0) {
-      writeLog(`<span class="highlight-red">${ui.errParams}</span>`);
-      return;
+      log.innerHTML += `\n<span class="highlight-red">${ui.errParams}</span>\n`;
+      return false;
     }
-    renderGrids();
+    return true;
   }
 
-  function renderGrids() {
+  function generateParityColumns() {
+    const candidates = [];
+    const total = Math.pow(2, r);
+    for (let i = 1; i < total; i++) {
+      const binary = i.toString(2).padStart(r, "0");
+      const weight = binary.split("").filter((b) => b === "1").length;
+      if (weight >= d - 1) {
+        candidates.push({ val: i, weight, bits: binary.split("").map(Number) });
+      }
+    }
+    candidates.sort((a, b) => a.weight - b.weight || a.val - b.val);
+    return candidates.slice(0, k).map((c) => c.bits);
+  }
+
+  function renderMatrices() {
     const gGrid = document.getElementById("matrix_g_grid");
     const hGrid = document.getElementById("matrix_h_grid");
     const uGrid = document.getElementById("input_grid");
     const vGrid = document.getElementById("output_grid");
+    const parityColumns = generateParityColumns();
+
+    gGrid.innerHTML = hGrid.innerHTML = uGrid.innerHTML = vGrid.innerHTML = "";
+    if (parityColumns.length < k) return false;
 
     gGrid.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
-    hGrid.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
-    uGrid.style.gridTemplateColumns = `repeat(${k}, 1fr)`;
-    vGrid.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
-
-    gGrid.innerHTML = "";
-    hGrid.innerHTML = "";
-    uGrid.innerHTML = "";
-    vGrid.innerHTML = "";
-
-    const isDefault = n === 7 && d === 3;
-
     for (let i = 0; i < k; i++) {
       for (let j = 0; j < n; j++) {
-        let val = isDefault ? defaultG[i][j] : i === j ? 1 : 0;
-        gGrid.innerHTML += `<input type="text" class="cell-input g-cell ${j >= k ? "parity" : ""}" data-r="${i}" data-c="${j}" value="${val}" maxlength="1">`;
+        const val = j < k ? (i === j ? 1 : 0) : parityColumns[i][j - k];
+        createCell(gGrid, val, "g-cell" + (j >= k ? " parity" : ""), true);
       }
     }
 
+    hGrid.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
     for (let i = 0; i < r; i++) {
       for (let j = 0; j < n; j++) {
-        let val = isDefault ? defaultH[i][j] : j - k === i ? 1 : 0;
-        hGrid.innerHTML += `<input type="text" class="cell-input h-cell ${j >= k ? "parity" : ""}" data-r="${i}" data-c="${j}" value="${val}" maxlength="1">`;
+        const val = j < k ? parityColumns[j][i] : j - k === i ? 1 : 0;
+        createCell(hGrid, val, "h-cell" + (j >= k ? " parity" : ""), true);
       }
     }
 
+    for (let i = 0; i < k; i++) createCell(uGrid, 0, "u-cell", false);
+    for (let i = 0; i < n; i++)
+      createCell(vGrid, 0, "v-cell output-bit", false);
+    return true;
+  }
+
+  function createCell(container, val, className, readOnly) {
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "cell-input " + className;
+    input.value = val;
+    if (readOnly) input.readOnly = true;
+    input.maxLength = 1;
+    input.oninput = (e) =>
+      (e.target.value = e.target.value.replace(/[^01]/g, "").slice(-1));
+    container.appendChild(input);
+  }
+
+  function encode() {
+    const log = document.getElementById("varshamov_log");
+    log.innerHTML = "";
+    log.innerHTML = `<span class="highlight-blue">${ui.encStart}</span>\n\n`;
+
+    const gCells = document.querySelectorAll(".g-cell");
+    const G = [];
     for (let i = 0; i < k; i++) {
-      let val = isDefault ? [1, 0, 1, 0][i] : 0;
-      uGrid.innerHTML += `<input type="text" class="cell-input u-cell" data-c="${i}" value="${val}" maxlength="1">`;
-    }
-
-    for (let i = 0; i < n; i++) {
-      vGrid.innerHTML += `<input type="text" class="cell-input v-cell output-bit" data-c="${i}" value="0" maxlength="1">`;
-    }
-
-    document.querySelectorAll(".cell-input").forEach((inp) => {
-      inp.addEventListener("input", (e) => {
-        if (!/^[01]$/.test(e.target.value)) e.target.value = "0";
-        e.target.classList.remove("cell-error", "cell-fixed");
-      });
-    });
-  }
-
-  function getMatrix(selector, rows, cols) {
-    const m = [];
-    const inputs = document.querySelectorAll(selector);
-    for (let r = 0; r < rows; r++) {
       const row = [];
-      for (let c = 0; c < cols; c++)
-        row.push(parseInt(inputs[r * cols + c].value) || 0);
-      m.push(row);
+      for (let j = 0; j < n; j++)
+        row.push(parseInt(gCells[i * n + j].value) || 0);
+      G.push(row);
     }
-    return m;
-  }
 
-  document.getElementById("btn_encode").addEventListener("click", () => {
-    if (k <= 0) return;
-    clearLog();
-    const G = getMatrix(".g-cell", k, n);
-    const U = getMatrix(".u-cell", 1, k)[0];
+    const U = Array.from(document.querySelectorAll(".u-cell")).map(
+      (el) => parseInt(el.value) || 0,
+    );
     const V = new Array(n).fill(0);
 
-    for (let j = 0; j < n; j++) {
-      for (let i = 0; i < k; i++) V[j] ^= U[i] & G[i][j];
+    log.innerHTML += `> ${ui.inputU}: [ ${U.join(" ")} ]\n`;
+
+    for (let i = 0; i < k; i++) {
+      if (U[i] === 1) {
+        log.innerHTML += `  <span class="highlight-yellow">⊕</span> ${ui.stepXor} G${i + 1}: [ ${G[i].join(" ")} ]\n`;
+        for (let j = 0; j < n; j++) V[j] ^= G[i][j];
+      }
     }
 
-    const vInputs = document.querySelectorAll(".v-cell");
-    V.forEach((bit, idx) => {
-      vInputs[idx].value = bit;
-      vInputs[idx].classList.remove("cell-error", "cell-fixed");
+    const vCells = document.querySelectorAll(".v-cell");
+    V.forEach((bit, i) => {
+      vCells[i].value = bit;
+      vCells[i].classList.remove("cell-error", "cell-fixed");
     });
-    writeLog(
-      `<span class="highlight-blue">${ui.enc}</span>\n>> [${V.join(" ")}]`,
-    );
-  });
 
-  document.getElementById("btn_decode").addEventListener("click", () => {
-    if (k <= 0) return;
-    clearLog();
-    const H = getMatrix(".h-cell", r, n);
-    const V = getMatrix(".v-cell", 1, n)[0];
+    log.innerHTML += `\n<span class="highlight-green">${ui.resV}: [ ${V.join(" ")} ]</span>\n`;
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function decode() {
+    const log = document.getElementById("varshamov_log");
+    log.innerHTML = "";
+    log.innerHTML = `<span class="highlight-blue">${ui.decStart}</span>\n\n`;
+
+    const hCells = document.querySelectorAll(".h-cell");
+    const H = [];
+    for (let i = 0; i < r; i++) {
+      const row = [];
+      for (let j = 0; j < n; j++)
+        row.push(parseInt(hCells[i * n + j].value) || 0);
+      H.push(row);
+    }
+
+    const vCells = document.querySelectorAll(".v-cell");
+    const V = Array.from(vCells).map((el) => parseInt(el.value) || 0);
     const S = new Array(r).fill(0);
 
     for (let i = 0; i < r; i++) {
       for (let j = 0; j < n; j++) S[i] ^= V[j] & H[i][j];
     }
 
-    writeLog(
-      `<span class="highlight-blue">${ui.dec}</span>\n>> S = [${S.join(" ")}]`,
-    );
-    const sStr = S.join("");
+    log.innerHTML += `> ${ui.calcS}: [ ${S.join(" ")} ]\n`;
 
-    if (sStr === "0".repeat(r)) {
-      writeLog(`<span class="highlight-green">${ui.none}</span>`);
-    } else {
-      let errCol = -1;
-      for (let j = 0; j < n; j++) {
-        let match = true;
-        for (let i = 0; i < r; i++) {
-          if (H[i][j] !== S[i]) {
-            match = false;
-            break;
-          }
-        }
-        if (match) {
-          errCol = j;
+    if (S.every((bit) => bit === 0)) {
+      log.innerHTML += `\n<span class="highlight-green">${ui.none}</span>\n`;
+      return;
+    }
+
+    let errPos = -1;
+    for (let j = 0; j < n; j++) {
+      let match = true;
+      for (let i = 0; i < r; i++) {
+        if (H[i][j] !== S[i]) {
+          match = false;
           break;
         }
       }
-
-      if (errCol !== -1) {
-        writeLog(
-          `<span class="highlight-red">${ui.errFound} ${errCol + 1}</span>`,
-        );
-        const cell = document.querySelector(`.v-cell[data-c="${errCol}"]`);
-        cell.classList.add("cell-error");
-
-        setTimeout(() => {
-          const oldVal = V[errCol];
-          const newVal = oldVal ^ 1;
-          cell.value = newVal;
-          cell.classList.replace("cell-error", "cell-fixed");
-          writeLog(
-            `<span class="highlight-green">${ui.fix} ${oldVal} ${ui.to} ${newVal}</span>`,
-          );
-        }, 600);
-      } else {
-        writeLog(`<span class="highlight-red">${ui.errNotFound}</span>`);
+      if (match) {
+        errPos = j;
+        break;
       }
     }
-  });
 
-  document
-    .getElementById("btn_apply")
-    .addEventListener("click", calculateParams);
+    if (errPos !== -1) {
+      log.innerHTML += `\n<span class="highlight-red">${ui.errFound}${errPos + 1}</span>\n`;
+      const oldVal = V[errPos];
+      const newVal = oldVal ^ 1;
+      vCells[errPos].classList.add("cell-error");
 
-  calculateParams();
+      setTimeout(() => {
+        vCells[errPos].value = newVal;
+        vCells[errPos].classList.replace("cell-error", "cell-fixed");
+        log.innerHTML += `<span class="highlight-blue">${ui.fix} ${oldVal} ${ui.to} ${newVal}</span>\n`;
+        log.scrollTop = log.scrollHeight;
+      }, 600);
+    } else {
+      log.innerHTML += `\n<span class="highlight-red">${ui.errNotFound}</span>\n`;
+    }
+  }
+
+  function initialize() {
+    document.getElementById("btn_apply").onclick = () => {
+      if (calculateParams()) renderMatrices();
+    };
+    document.getElementById("btn_encode").onclick = encode;
+    document.getElementById("btn_decode").onclick = decode;
+    if (calculateParams()) renderMatrices();
+  }
+
+  document.readyState === "loading"
+    ? document.addEventListener("DOMContentLoaded", initialize)
+    : initialize();
 </script>
