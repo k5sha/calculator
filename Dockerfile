@@ -3,20 +3,19 @@ FROM node:22-alpine AS build
 WORKDIR /app
 
 COPY package.json package-lock.json* ./
-
-RUN npm install
+RUN npm ci 
 
 COPY . .
 
 RUN npm run lint
 RUN npm run build
 
-FROM nginx:alpine
+FROM nginx:1.27-alpine 
 
-RUN addgroup -S calculator && adduser -S calculator -G calculator
+RUN addgroup -g 1001 -S calculator && \
+    adduser -u 1001 -S calculator -G calculator
 
 COPY --from=build /app/dist /usr/share/nginx/html
-
 COPY nginx.conf /etc/nginx/nginx.conf
 
 RUN chown -R calculator:calculator /usr/share/nginx/html && \
@@ -28,6 +27,6 @@ RUN chown -R calculator:calculator /usr/share/nginx/html && \
 
 USER calculator
 
-EXPOSE 80
+EXPOSE 8080
 
 CMD ["nginx", "-g", "daemon off;"]
