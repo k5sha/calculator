@@ -4,4 +4,3 @@ dist
 .git
 .vscode
 .eslintcache
-package-lock.json
