@@ -12,6 +12,8 @@ RUN npm run build
 
 FROM nginx:1.27-alpine 
 
+RUN apk update && apk upgrade --no-cache
+
 RUN addgroup -g 1001 -S calculator && \
     adduser -u 1001 -S calculator -G calculator
 
