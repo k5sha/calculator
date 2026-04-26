@@ -1,0 +1,407 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import { getLangFromUrl } from "../../../i18n/utils";
+
+export function getStaticPaths() {
+  return [{ params: { lang: "en" } }, { params: { lang: "uk" } }];
+}
+
+const lang = getLangFromUrl(Astro.url);
+
+const pageT = {
+  uk: {
+    title: "Коди БЧХ",
+    subtitle:
+      "Інструмент для симуляції кодування та виправлення помилок (n, k, s).",
+    theoryTitle: "📚 Про алгоритм",
+    theoryDesc:
+      "Коди Боуза — Чоудхурі — Хоквінгема (БЧХ) — це клас циклічних кодів для виправлення помилок, що базуються на властивостях поліномів у скінченних полях.",
+    principle:
+      "Кодування: Повідомлення G множиться на X^m, а отримана остача від ділення на твірний поліном P(x) додається до повідомлення.",
+    decoding:
+      "Декодування: Використовується метод циклічних зсувів та аналіз ваги синдрому (залишку) для пошуку вектора помилки.",
+    application:
+      "Застосування: Супутниковий зв'язок, QR-коди, SSD-накопичувачі та цифрова передача даних.",
+    sectionEnc: "🔐 Кодування",
+    sectionDec: "🔓 Декодування",
+    binInput: "Інформаційні біти (G):",
+    errorInput: "Кількість помилок (s):",
+    lenInput: "Довжина слова (n):",
+    codewordInput: "Прийнята комбінація (H):",
+    btnProcess: "Розрахувати",
+    placeholder: "// Очікування введення даних...",
+  },
+  en: {
+    title: "BCH Codes",
+    subtitle: "Tool for simulating encoding and error correction (n, k, s).",
+    theoryTitle: "📚 About Algorithm",
+    theoryDesc:
+      "BCH codes (Bose–Chaudhuri–Hocquenghem) are a class of cyclic error-correcting codes constructed using polynomials over finite fields.",
+    principle:
+      "Encoding: Message G is shifted by X^m, and the remainder of division by generator P(x) is appended as parity bits.",
+    decoding:
+      "Decoding: Error detection via syndrome analysis and cyclic shifts to identify and flip erroneous bits.",
+    application:
+      "Application: Satellite communications, QR codes, SSD storage, and high-speed digital transmission.",
+    sectionEnc: "🔐 Encoding",
+    sectionDec: "🔓 Decoding",
+    binInput: "Information Bits (G):",
+    errorInput: "Error capacity (s):",
+    lenInput: "Word length (n):",
+    codewordInput: "Received Sequence (H):",
+    btnProcess: "Calculate",
+    placeholder: "// Waiting for input...",
+  },
+}[lang];
+
+const bchKeywords =
+  lang === "uk"
+    ? "коди бчх, теорія інформації, виправлення помилок, твірний поліном, циклічні коди, кпі лаба, bch code calculator"
+    : "bch codes, error correction, generator polynomial, cyclic codes, bch calculator online, syndrome decoding";
+
+const bchDescription =
+  lang === "uk"
+    ? "Онлайн калькулятор кодів БЧХ: кодування та виправлення помилок методом циклічних зсувів з детальними логами."
+    : "Online BCH code calculator: encoding and error correction using cyclic shift method with detailed calculation logs.";
+---
+
+<Layout
+  title={`${pageT.title} — Digital Logic Lab`}
+  description={bchDescription}
+  keywords={bchKeywords}
+>
+  <main class="main-content">
+    <header class="hero">
+      <h1>{pageT.title}</h1>
+      <p class="description">{pageT.subtitle}</p>
+    </header>
+
+    <section class="theory-card">
+      <h3>{pageT.theoryTitle}</h3>
+      <p>{pageT.theoryDesc}</p>
+      <ul>
+        <li><strong>Принцип:</strong> {pageT.principle}</li>
+        <li><strong>Метод:</strong> {pageT.decoding}</li>
+        <li><strong>Сфери:</strong> {pageT.application}</li>
+      </ul>
+    </section>
+
+    <div class="container">
+      <h2>{pageT.sectionEnc}</h2>
+      <div class="grid-layout">
+        <div class="controls">
+          <div class="input-group">
+            <label>{pageT.lenInput} (n)</label>
+            <select id="enc_n" class="styled-select">
+              <option value="7">n=7 (h=3)</option>
+              <option value="15" selected>n=15 (h=4)</option>
+              <option value="31">n=31 (h=5)</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>{pageT.errorInput} (s)</label>
+            <input type="number" id="enc_s" value="2" min="1" max="4" />
+          </div>
+          <div class="input-group">
+            <label>{pageT.binInput}</label>
+            <input type="text" id="enc_g" value="1101011" />
+          </div>
+          <button id="btn_bch_enc" class="action-btn">{pageT.btnProcess}</button
+          >
+        </div>
+        <div id="enc_log" class="terminal">{pageT.placeholder}</div>
+      </div>
+    </div>
+
+    <div class="container">
+      <h2>{pageT.sectionDec}</h2>
+      <div class="grid-layout">
+        <div class="controls">
+          <div class="input-group">
+            <label>Допустиме s для виправлення:</label>
+            <input
+              type="number"
+              id="dec_s_val"
+              value="2"
+              readonly
+              style="background: #f1f5f9; cursor: not-allowed;"
+            />
+          </div>
+          <div class="input-group">
+            <label>{pageT.codewordInput}</label>
+            <input type="text" id="dec_h" value="100111100100011" />
+          </div>
+          <button id="btn_bch_dec" class="action-btn">{pageT.btnProcess}</button
+          >
+        </div>
+        <div id="dec_log" class="terminal">{pageT.placeholder}</div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .main-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+  .hero {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  h1 {
+    color: var(--primary, #2563eb);
+    font-size: 2.8rem;
+    margin-bottom: 10px;
+  }
+  .description {
+    font-size: 1.2rem;
+    color: #64748b;
+  }
+  .theory-card {
+    background: #eff6ff;
+    padding: 25px;
+    border-radius: 12px;
+    border-left: 6px solid var(--primary, #2563eb);
+    margin-bottom: 40px;
+  }
+  .theory-card h3 {
+    margin-top: 0;
+    color: #1e40af;
+  }
+  .container {
+    background: var(--card, #ffffff);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 40px;
+  }
+  .grid-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 30px;
+  }
+  @media (max-width: 900px) {
+    .grid-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+  .input-group {
+    margin-bottom: 20px;
+  }
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #475569;
+  }
+  input,
+  .styled-select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-family: monospace;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+  .action-btn {
+    width: 100%;
+    background: var(--primary, #2563eb);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .action-btn:hover {
+    background: var(--primary-hover, #1d4ed8);
+    transform: translateY(-1px);
+  }
+  .terminal {
+    background: var(--terminal-bg, #0f172a);
+    color: var(--terminal-text, #38bdf8);
+    padding: 20px;
+    border-radius: 12px;
+    font-family: "Fira Code", monospace;
+    font-size: 0.9rem;
+    min-height: 250px;
+    white-space: pre-wrap;
+    border: 1px solid #333;
+    overflow-x: auto;
+  }
+  :global(.highlight-blue) {
+    color: #60a5fa;
+    font-weight: bold;
+  }
+  :global(.highlight-green) {
+    color: #4ade80;
+    font-weight: bold;
+  }
+</style>
+
+<script define:vars={{ lang }}>
+  // Використовуємо define:vars для передачі lang у скрипт
+  const MIN_POLY = {
+    3: { 1: "1011", 3: "1101" },
+    4: { 1: "10011", 3: "11111", 5: "111", 7: "11011" },
+    5: { 1: "100101", 3: "111101", 5: "110111", 7: "111011", 9: "11101" },
+  };
+
+  const ui = {
+    uk: {
+      encStart: "[*] ПОЧАТОК КОДУВАННЯ БЧХ",
+      decStart: "[*] ПОШУК ПОМИЛОК (Метод циклічних зсувів)",
+      step1: "Крок 1: Побудова P(x) з таблиці мінімальних поліномів...",
+      poly: "Твірний поліном P(x):",
+      params: "Параметри:",
+      step2: "Крок 2: Обчислення остачі R(x) = (G * X^m) mod P(x)...",
+      remainder: "Остача R(x):",
+      result: "РЕЗУЛЬТАТ F(x):",
+      shift: "Зсув",
+      weight: "вага",
+      errorFound: "[!] Знайдено вектор помилки (w <= s)",
+      fixed: "ВИПРАВЛЕНО:",
+      info: "ІНФОРМАЦІЯ:",
+      notFound: "[!] Помилок не виявлено або вони не виправні.",
+    },
+    en: {
+      encStart: "[*] STARTING BCH ENCODING",
+      decStart: "[*] ERROR SEARCH (Cyclic Shift Method)",
+      step1: "Step 1: Constructing P(x) from minimal polynomials table...",
+      poly: "Generator polynomial P(x):",
+      params: "Parameters:",
+      step2: "Step 2: Calculating remainder R(x) = (G * X^m) mod P(x)...",
+      remainder: "Remainder R(x):",
+      result: "RESULT F(x):",
+      shift: "Shift",
+      weight: "weight",
+      errorFound: "[!] Error vector found (w <= s)",
+      fixed: "FIXED:",
+      info: "INFORMATION:",
+      notFound: "[!] No errors detected or they are uncorrectable.",
+    },
+  }[lang];
+
+  const getDeg = (p) => p.replace(/^0+(?!$)/, "").length - 1;
+
+  const polyMul = (a, b) => {
+    let aArr = a.split("").map(Number);
+    let bArr = b.split("").map(Number);
+    let res = new Array(aArr.length + bArr.length - 1).fill(0);
+    for (let i = 0; i < aArr.length; i++) {
+      for (let j = 0; j < bArr.length; j++) {
+        res[i + j] ^= aArr[i] & bArr[j];
+      }
+    }
+    return res.join("");
+  };
+
+  const getRemainder = (dividend, divisor) => {
+    let res = dividend.split("");
+    let div = divisor.split("");
+    for (let i = 0; i <= dividend.length - divisor.length; i++) {
+      if (res[i] === "1") {
+        for (let j = 0; j < divisor.length; j++) {
+          res[i + j] = res[i + j] === div[j] ? "0" : "1";
+        }
+      }
+    }
+    return res.slice(dividend.length - divisor.length + 1).join("");
+  };
+
+  const generateP = (n, s) => {
+    const h = Math.log2(n + 1);
+    const polys = [];
+    const seen = new Set();
+    for (let i = 1; i < 2 * s; i += 2) {
+      const p = MIN_POLY[h][i];
+      if (p && !seen.has(p)) {
+        polys.push(p);
+        seen.add(p);
+      }
+    }
+    let res = polys[0];
+    for (let i = 1; i < polys.length; i++) res = polyMul(res, polys[i]);
+    return res;
+  };
+
+  const xor = (a, b) => {
+    const len = Math.max(a.length, b.length);
+    const aP = a.padStart(len, "0");
+    const bP = b.padStart(len, "0");
+    let res = "";
+    for (let i = 0; i < len; i++) res += aP[i] === bP[i] ? "0" : "1";
+    return res;
+  };
+
+  document.getElementById("btn_bch_enc")?.addEventListener("click", () => {
+    const logElem = document.getElementById("enc_log");
+    const n = parseInt(document.getElementById("enc_n").value);
+    const s = parseInt(document.getElementById("enc_s").value);
+    const g = document.getElementById("enc_g").value.trim();
+    if (!logElem || !g) return;
+
+    const p = generateP(n, s);
+    const m = getDeg(p);
+    const k = n - m;
+
+    document.getElementById("dec_s_val").value = s;
+
+    const gFixed = g.padStart(k, "0").slice(0, k);
+    const r = getRemainder(gFixed + "0".repeat(m), p);
+
+    let output = `<span class="highlight-blue">${ui.encStart} (${n}, ${k}, ${s})</span>\n\n`;
+    output += `${ui.step1}\n`;
+    output += `${ui.poly} <span class="highlight-green">${p}</span>\n`;
+    output += `${ui.params} n=${n}, k=${k}, m=${m}\n\n`;
+    output += `${ui.step2}\n`;
+    output += `${ui.remainder} <span class="highlight-green">${r}</span>\n\n`;
+    output += `<span class="highlight-blue">${ui.result}</span> <span class="highlight-green">${gFixed + r}</span>`;
+
+    logElem.innerHTML = output;
+  });
+
+  document.getElementById("btn_bch_dec")?.addEventListener("click", () => {
+    const logElem = document.getElementById("dec_log");
+    const h_val = document.getElementById("dec_h").value.trim();
+    const n = parseInt(document.getElementById("enc_n").value);
+    const s = parseInt(document.getElementById("dec_s_val").value);
+    if (!logElem || !h_val) return;
+
+    const p = generateP(n, s);
+    const m = getDeg(p);
+    let curr = h_val.padStart(n, "0");
+    let solved = false;
+
+    let output = `<span class="highlight-blue">${ui.decStart}</span>\n\n`;
+
+    for (let i = 0; i < n; i++) {
+      const r = getRemainder(curr, p);
+      const w = (r.match(/1/g) || []).length;
+      output += `${ui.shift} ${i}: R=${r.padStart(m, "0")} (${ui.weight} w=${w})\n`;
+
+      if (w > 0 && w <= s) {
+        output += `\n<span class="highlight-green">${ui.errorFound}</span>\n`;
+        let error = "0".repeat(n - r.length) + r;
+        let corrected = xor(curr, error);
+
+        let res = corrected;
+        for (let j = 0; j < i; j++)
+          res = res[res.length - 1] + res.substring(0, res.length - 1);
+
+        output += `\n<span class="highlight-blue">${ui.fixed}</span> <span class="highlight-green">${res}</span>\n`;
+        output += `<span class="highlight-blue">${ui.info}</span> <span class="highlight-green">${res.substring(0, n - m)}</span>`;
+        solved = true;
+        break;
+      }
+      curr = curr.substring(1) + curr[0];
+    }
+    if (!solved)
+      output += `\n<span style="color: #ef4444;">${ui.notFound}</span>`;
+    logElem.innerHTML = output;
+  });
+</script>

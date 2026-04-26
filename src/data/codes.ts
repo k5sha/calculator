@@ -142,4 +142,15 @@ export const allCodes: CodeItem[] = [
     icon: "🌀",
     isAvailable: true,
   },
+  {
+    name: { uk: "Коди БЧХ", en: "BCH Codes" },
+    path: "/codes/bch",
+    description: {
+      uk: "Потужний клас циклічних кодів для виправлення множинних помилок за допомогою поліноміальної арифметики.",
+      en: "A powerful class of cyclic codes for multiple error correction using polynomial arithmetic."
+    },
+    categoryKey: "category.error",
+    icon: "🧩",
+    isAvailable: true,
+  },
 ];
