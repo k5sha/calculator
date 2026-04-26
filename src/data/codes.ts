@@ -131,4 +131,15 @@ export const allCodes: CodeItem[] = [
     icon: "🛡️",
     isAvailable: true,
   },
+  {
+    name: { uk: "Код Абрамсона", en: "Abramson Code" },
+    path: "/codes/abramson",
+    description: {
+      uk: "Модифікований циклічний код для виправлення одиночних помилок та пачок довжиною до двох біт.",
+      en: "A modified cyclic code designed to correct single errors and bursts up to two bits long."
+    },
+    categoryKey: "category.error",
+    icon: "🌀",
+    isAvailable: true,
+  },
 ];
