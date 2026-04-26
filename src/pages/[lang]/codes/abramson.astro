@@ -1,0 +1,332 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import { getLangFromUrl } from "../../../i18n/utils";
+
+export function getStaticPaths() {
+  return [{ params: { lang: "en" } }, { params: { lang: "uk" } }];
+}
+
+const lang = getLangFromUrl(Astro.url);
+
+const pageT = {
+  uk: {
+    title: "Коди Абрамсона",
+    subtitle: "Система виправлення одиничних та суміжних подвійних помилок.",
+    theoryTitle: "📖 Алгоритм роботи",
+    aboutDesc:
+      "Коди Абрамсона використовують твірний поліном P(x) = (1+x)P₁(x). Це дозволяє досягти dmin=4 та виправляти пачки помилок довжиною b=2.",
+    step1: "Кодування: Додавання остачі R(x) від ділення x^m·G(x) на P(x).",
+    step2:
+      "Декодування: Обчислення синдрому та циклічні зсуви вліво при W > 2.",
+    step3: "Корекція: XOR з остачею при W ≤ 2 та зворотний зсув комбінації.",
+    sectionEnc: "🔐 Кодування (G → F)",
+    sectionDec: "🔓 Декодування та корекція",
+    binInput: "Інформаційні біти (G):",
+    polyInput: "Незвідний поліном (P₁):",
+    codewordInput: "Прийнята комбінація (H):",
+    btnProcess: "Виконати",
+    placeholder: "// Очікування вводу даних...",
+  },
+  en: {
+    title: "Abramson Codes",
+    subtitle: "System for correcting single and adjacent double errors.",
+    theoryTitle: "📖 Algorithm Overview",
+    aboutDesc:
+      "Abramson codes use P(x) = (1+x)P₁(x) as a generator, achieving dmin=4 to correct bursts of length b=2.",
+    step1: "Encoding: Appending remainder R(x) of x^m·G(x) divided by P(x).",
+    step2: "Decoding: Syndrome calculation and cyclic left shifts if W > 2.",
+    step3: "Correction: XOR with remainder when W ≤ 2 and reverse shift.",
+    sectionEnc: "🔐 Encoding (G → F)",
+    sectionDec: "🔓 Decoding & Correction",
+    binInput: "Information bits (G):",
+    polyInput: "Irreducible poly (P₁):",
+    codewordInput: "Received sequence (H):",
+    btnProcess: "Process",
+    placeholder: "// Waiting for data...",
+  },
+}[lang];
+
+const keywords =
+  lang === "uk"
+    ? "коди абрамсона, циклічні коди, виправлення пачок помилок, твірний поліном, теорія інформації, ExitCodeOne"
+    : "abramson codes, cyclic codes, burst error correction, generator polynomial, information theory, ExitCodeOne";
+---
+
+<Layout
+  title={`${pageT.title} — Lab Work`}
+  description={pageT.subtitle}
+  keywords={keywords}
+>
+  <main class="main-content">
+    <header class="hero">
+      <h1>{pageT.title}</h1>
+      <p class="description">{pageT.subtitle}</p>
+    </header>
+
+    <section class="theory-card">
+      <h3>{pageT.theoryTitle}</h3>
+      <p>{pageT.aboutDesc}</p>
+      <ul style="list-style: none; padding: 0; margin: 15px 0;">
+        <li style="margin-bottom: 8px;">
+          <strong>{pageT.step1.split(":")[0]}:</strong>
+          {pageT.step1.split(":")[1]}
+        </li>
+        <li style="margin-bottom: 8px;">
+          <strong>{pageT.step2.split(":")[0]}:</strong>
+          {pageT.step2.split(":")[1]}
+        </li>
+        <li style="margin-bottom: 8px;">
+          <strong>{pageT.step3.split(":")[0]}:</strong>
+          {pageT.step3.split(":")[1]}
+        </li>
+      </ul>
+    </section>
+
+    <div class="container">
+      <h2>{pageT.sectionEnc}</h2>
+      <div class="grid-layout">
+        <div class="controls">
+          <div class="input-group">
+            <label>{pageT.binInput}</label>
+            <input type="text" id="enc_input" value="0110010110" />
+          </div>
+          <div class="input-group">
+            <label>{pageT.polyInput} (P₁)</label>
+            <input type="text" id="poly_input_enc" value="11001" />
+          </div>
+          <button id="btn_encode">{pageT.btnProcess}</button>
+        </div>
+        <div id="enc_log" class="terminal">{pageT.placeholder}</div>
+      </div>
+    </div>
+
+    <div class="container">
+      <h2>{pageT.sectionDec}</h2>
+      <div class="grid-layout">
+        <div class="controls">
+          <div class="input-group">
+            <label>{pageT.codewordInput}</label>
+            <input type="text" id="dec_input" value="111111110110000" />
+          </div>
+          <div class="input-group">
+            <label>{pageT.polyInput} (P₁)</label>
+            <input type="text" id="poly_input_dec" value="11001" />
+          </div>
+          <button id="btn_decode">{pageT.btnProcess}</button>
+        </div>
+        <div id="dec_log" class="terminal">{pageT.placeholder}</div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .main-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+  .hero {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  h1 {
+    color: var(--primary);
+    font-size: 2.8rem;
+    margin-bottom: 10px;
+  }
+  .description {
+    font-size: 1.2rem;
+    color: #64748b;
+  }
+  .theory-card {
+    background: #eff6ff;
+    padding: 25px;
+    border-radius: 12px;
+    border-left: 6px solid var(--primary);
+    margin-bottom: 40px;
+  }
+  .theory-card h3 {
+    margin-top: 0;
+    color: #1e40af;
+  }
+  .container {
+    background: var(--card);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 40px;
+  }
+  .grid-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 30px;
+  }
+  @media (max-width: 900px) {
+    .grid-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+  .input-group {
+    margin-bottom: 20px;
+  }
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #475569;
+  }
+  input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-family: monospace;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+  button {
+    width: 100%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  button:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+  }
+  .terminal {
+    background: var(--terminal-bg);
+    color: var(--terminal-text);
+    padding: 20px;
+    border-radius: 12px;
+    font-family: "Fira Code", monospace;
+    font-size: 0.9rem;
+    min-height: 250px;
+    white-space: pre-wrap;
+    border: 1px solid #333;
+    overflow-x: auto;
+  }
+  :global(.highlight-blue) {
+    color: #60a5fa;
+    font-weight: bold;
+  }
+  :global(.highlight-green) {
+    color: #4ade80;
+    font-weight: bold;
+  }
+</style>
+
+<script define:vars={{ lang }}>
+  const ui = {
+    uk: {
+      genP: "Твірний поліном P(x) = (1+x)P₁:",
+      startEnc: "--- ЗАПУСК КОДУВАННЯ ---",
+      calcR: "Обчислення залишку R(x)...",
+      resEnc: "Закодована комбінація F(x):",
+      startDec: "--- ЗАПУСК ДЕКОДУВАННЯ (ЗСУВИ) ---",
+      step: "Зсув",
+      found: "Умова виконана (W ≤ 2, суміжні)!",
+      final: "Виправлений код:",
+      info: "Інфо-біти (G):",
+    },
+    en: {
+      genP: "Generator Poly P(x) = (1+x)P₁:",
+      startEnc: "--- START ENCODING ---",
+      calcR: "Calculating remainder R(x)...",
+      resEnc: "Encoded sequence F(x):",
+      startDec: "--- START DECODING (SHIFTS) ---",
+      step: "Shift",
+      found: "Condition met (W ≤ 2, adjacent)!",
+      final: "Corrected code:",
+      info: "Info bits (G):",
+    },
+  }[lang];
+
+  function xorDiv(dividend, divisor) {
+    let res = dividend.split("").map(Number);
+    let div = divisor.split("").map(Number);
+    for (let i = 0; i <= res.length - div.length; i++) {
+      if (res[i] === 1) {
+        for (let j = 0; j < div.length; j++) res[i + j] ^= div[j];
+      }
+    }
+    return res.slice(res.length - div.length + 1).join("");
+  }
+
+  function getWeight(s) {
+    return (s.match(/1/g) || []).length;
+  }
+
+  document.getElementById("btn_encode").onclick = () => {
+    const log = document.getElementById("enc_log");
+    log.innerHTML = "";
+    const g = document.getElementById("enc_input").value.replace(/\s/g, "");
+    const p1 = document
+      .getElementById("poly_input_enc")
+      .value.replace(/\s/g, "");
+
+    let p = ((BigInt("0b" + p1) << 1n) ^ BigInt("0b" + p1)).toString(2);
+    const m = p.length - 1;
+
+    log.innerHTML += `<span class="highlight-blue">${ui.startEnc}</span>\n`;
+    log.innerHTML += `${ui.genP} <span>${p}</span>\n\n`;
+
+    let r = xorDiv(g + "0".repeat(m), p);
+    log.innerHTML += `${ui.calcR}\n`;
+    log.innerHTML += `R(x) = <span class="highlight-green">${r}</span>\n\n`;
+    log.innerHTML += `${ui.resEnc} <span class="highlight-blue">${g}${r}</span>`;
+  };
+
+  document.getElementById("btn_decode").onclick = () => {
+    const log = document.getElementById("dec_log");
+    log.innerHTML = "";
+    let h = document.getElementById("dec_input").value.replace(/\s/g, "");
+    const p1 = document
+      .getElementById("poly_input_dec")
+      .value.replace(/\s/g, "");
+
+    let p = ((BigInt("0b" + p1) << 1n) ^ BigInt("0b" + p1)).toString(2);
+    const m = p.length - 1;
+
+    log.innerHTML += `<span class="highlight-blue">${ui.startDec}</span>\n\n`;
+
+    let curr = h;
+    let shifts = 0;
+    let found = false;
+
+    for (let i = 0; i < h.length; i++) {
+      let r = xorDiv(curr, p);
+      let w = getWeight(r);
+      log.innerHTML += `[${ui.step} ${i}] ${curr} | S: ${r} (W=${w})\n`;
+
+      let isAdj = w === 1 || (w === 2 && r.includes("11"));
+      if (isAdj) {
+        log.innerHTML += `<span class="highlight-green">→ ${ui.found}</span>\n`;
+        let bits = curr.split("").map(Number);
+        let remBits = r.padStart(h.length, "0").split("").map(Number);
+        let corrected = bits.map((b, idx) => b ^ remBits[idx]).join("");
+
+        for (let j = 0; j < shifts; j++) {
+          corrected =
+            corrected[corrected.length - 1] +
+            corrected.substring(0, corrected.length - 1);
+        }
+
+        log.innerHTML += `\n<span class="highlight-blue">${ui.final}</span> <span class="highlight-green">${corrected}</span>\n`;
+        log.innerHTML += `${ui.info} <span>${corrected.substring(0, corrected.length - m)}</span>`;
+        found = true;
+        break;
+      }
+      curr = curr.substring(1) + curr[0];
+      shifts++;
+    }
+    if (!found)
+      log.innerHTML += `<span style="color: #fb7185">Неможливо виправити помилку.</span>`;
+  };
+</script>
