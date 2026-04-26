@@ -122,13 +122,13 @@ export const allCodes: CodeItem[] = [
   },
   {
     name: { uk: "Код Хеммінга", en: "Hamming Code" },
-    path: "#",
+    path: "/codes/hamming",
     description: {
       uk: "Класичний метод самокоригованих кодів для контролю цілісності даних.",
       en: "A classic error-correcting code method for data integrity control."
     },
     categoryKey: "category.systematic",
     icon: "🛡️",
-    isAvailable: false,
+    isAvailable: true,
   },
 ];

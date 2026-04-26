@@ -1,0 +1,378 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import { getLangFromUrl } from "../../../i18n/utils";
+
+export function getStaticPaths() {
+  return [{ params: { lang: "en" } }, { params: { lang: "uk" } }];
+}
+
+const lang = getLangFromUrl(Astro.url);
+
+const pageT = {
+  uk: {
+    title: "Код Хеммінга",
+    subtitle: "Універсальний калькулятор систематичного коду з dmin=3.",
+    aboutTitle: "📚 Про алгоритм",
+    aboutDesc:
+      "Код Хеммінга — це лінійний код, що дозволяє виявляти та виправляти поодинокі помилки. Він автоматично додає перевірочні біти до інформаційної послідовності.",
+    principle:
+      "Принцип: Перевірочні розряди розміщуються на позиціях, що є степенями двійки (1, 2, 4, 8...).",
+    syndrome:
+      "Синдром: Обчислений при декодуванні синдром S прямо вказує на порядковий номер спотвореного біта.",
+    application:
+      "Застосування: Оперативна пам'ять (ECC RAM), дискові масиви та цифрові канали зв'язку.",
+    sectionEnc: "🔐 Кодування",
+    sectionDec: "🔓 Декодування та виправлення",
+    binInput: "Інформаційні біти (k):",
+    hamInput: "Кодова комбінація (n):",
+    btnConvert: "Виконати",
+    placeholder: "// Очікування введення даних...",
+  },
+  en: {
+    title: "Hamming Code",
+    subtitle: "Universal systematic code calculator with dmin=3.",
+    aboutTitle: "📚 About Algorithm",
+    aboutDesc:
+      "Hamming code is a linear error-correcting code that can detect and fix single-bit errors by adding specific parity bits.",
+    principle:
+      "Principle: Parity bits are placed at positions that are powers of two (1, 2, 4, 8...).",
+    syndrome:
+      "Syndrome: The syndrome S calculated during decoding points directly to the erroneous bit index.",
+    application:
+      "Application: ECC RAM, RAID systems, and reliable digital data transmission.",
+    sectionEnc: "🔐 Encoding",
+    sectionDec: "🔓 Decoding & Correction",
+    binInput: "Information Bits (k):",
+    hamInput: "Encoded Sequence (n):",
+    btnConvert: "Process",
+    placeholder: "// Waiting for input...",
+  },
+}[lang];
+
+const hamKeywords =
+  lang === "uk"
+    ? "код хеммінга, виправлення помилок, теорія інформації, синдром, ecc, калькулятор хеммінга"
+    : "hamming code calculator, error correction, ecc, syndrome calculation, digital logic";
+
+const hamDescription =
+  lang === "uk"
+    ? "Калькулятор коду Хеммінга: автоматичне кодування та покрокове виправлення помилок з обчисленням синдрому."
+    : "Hamming code calculator with step-by-step error correction and syndrome calculation logs.";
+---
+
+<Layout
+  title={`${pageT.title} — Digital Logic Lab`}
+  description={hamDescription}
+  keywords={hamKeywords}
+>
+  <main class="main-content">
+    <header class="hero">
+      <h1>{pageT.title}</h1>
+      <p class="description">{pageT.subtitle}</p>
+    </header>
+
+    <section class="theory-card">
+      <h3>{pageT.aboutTitle}</h3>
+      <p>{pageT.aboutDesc}</p>
+      <ul>
+        <li>
+          <strong>{pageT.principle.split(":")[0]}:</strong>
+          {pageT.principle.split(":")[1]}
+        </li>
+        <li>
+          <strong>{pageT.syndrome.split(":")[0]}:</strong>
+          {pageT.syndrome.split(":")[1]}
+        </li>
+        <li>
+          <strong>{pageT.application.split(":")[0]}:</strong>
+          {pageT.application.split(":")[1]}
+        </li>
+      </ul>
+    </section>
+
+    <div class="container">
+      <h2>{pageT.sectionEnc}</h2>
+      <div class="grid-layout">
+        <div class="controls">
+          <div class="input-group">
+            <label>{pageT.binInput}</label>
+            <input type="text" id="enc_input" value="11001010111" />
+          </div>
+          <button id="btn_encode">{pageT.btnConvert}</button>
+        </div>
+        <div id="enc_log" class="terminal">{pageT.placeholder}</div>
+      </div>
+    </div>
+
+    <div class="container">
+      <h2>{pageT.sectionDec}</h2>
+      <div class="grid-layout">
+        <div class="controls">
+          <div class="input-group">
+            <label>{pageT.hamInput}</label>
+            <input type="text" id="dec_input" value="101100000110000" />
+          </div>
+          <button id="btn_decode">{pageT.btnConvert}</button>
+        </div>
+        <div id="dec_log" class="terminal">{pageT.placeholder}</div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .main-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+  .hero {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  h1 {
+    color: var(--primary);
+    font-size: 2.8rem;
+    margin-bottom: 10px;
+  }
+  .description {
+    font-size: 1.2rem;
+    color: #64748b;
+  }
+
+  .theory-card {
+    background: #eff6ff;
+    padding: 25px;
+    border-radius: 12px;
+    border-left: 6px solid var(--primary);
+    margin-bottom: 40px;
+  }
+  .theory-card h3 {
+    margin-top: 0;
+    color: #1e40af;
+  }
+
+  .theory-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .theory-card li {
+    margin-bottom: 8px;
+    padding-left: 20px;
+    position: relative;
+    color: #374151;
+  }
+  .theory-card li::before {
+    content: "•";
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+  }
+
+  .container {
+    background: var(--card);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 40px;
+  }
+  .grid-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 30px;
+  }
+  @media (max-width: 900px) {
+    .grid-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .input-group {
+    margin-bottom: 20px;
+  }
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #475569;
+  }
+  input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-family: monospace;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+  button {
+    width: 100%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  button:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+  }
+
+  /* TERMINAL STYLE */
+  .terminal {
+    background: var(--terminal-bg);
+    color: var(--terminal-text);
+    padding: 20px;
+    border-radius: 12px;
+    font-family: "Fira Code", monospace;
+    font-size: 0.9rem;
+    min-height: 250px;
+    white-space: pre-wrap;
+    border: 1px solid #333;
+    overflow-x: auto;
+  }
+
+  :global(.highlight-blue) {
+    color: #60a5fa;
+    font-weight: bold;
+  }
+  :global(.highlight-green) {
+    color: #4ade80;
+    font-weight: bold;
+  }
+  :global(.highlight-red) {
+    color: #f87171;
+    font-weight: bold;
+  }
+</style>
+
+<script define:vars={{ lang }}>
+  const ui = {
+    uk: {
+      errBin: "Тільки 0 та 1!",
+      startEnc: "[*] ПОЧАТОК КОДУВАННЯ ХЕММІНГА",
+      startDec: "[*] ПОЧАТОК ДЕКОДУВАННЯ ТА ПЕРЕВІРКИ",
+      calcP: "Обчислення P",
+      calcS: "Обчислення S",
+      syndrome: "Синдром S:",
+      noErr: "Помилок не виявлено.",
+      errAt: "Помилка в біті №",
+      fixing: "Виправлення розряду...",
+      final: "РЕЗУЛЬТАТ:",
+      extracted: "ЧИСТІ ДАНІ (k):",
+    },
+    en: {
+      errBin: "Only 0 and 1 allowed!",
+      startEnc: "[*] HAMMING ENCODING STARTED",
+      startDec: "[*] DECODING & ERROR CHECK STARTED",
+      calcP: "Calculating P",
+      calcS: "Calculating S",
+      syndrome: "Syndrome S:",
+      noErr: "No errors detected.",
+      errAt: "Error found at bit #",
+      fixing: "Correcting bit...",
+      final: "RESULT:",
+      extracted: "EXTRACTED DATA (k):",
+    },
+  }[lang];
+
+  const logTo = (id, text, className = "") => {
+    const el = document.getElementById(id);
+    const content = className
+      ? `<span class="${className}">${text}</span>`
+      : text;
+    el.innerHTML += content + "\n";
+  };
+
+  const validate = (str) => /^[01]+$/.test(str.replace(/\s/g, ""));
+
+  document.getElementById("btn_encode")?.addEventListener("click", () => {
+    const logEl = document.getElementById("enc_log");
+    logEl.innerHTML = "";
+    let raw = document.getElementById("enc_input").value.replace(/\s/g, "");
+    if (!validate(raw)) return alert(ui.errBin);
+
+    const k = raw.length;
+    let r = 0;
+    while (Math.pow(2, r) < k + r + 1) r++;
+    const n = k + r;
+
+    logTo("enc_log", ui.startEnc, "highlight-blue");
+    logTo("enc_log", `Параметри: k=${k}, r=${r} → n=${n}\n`);
+
+    let hamming = new Array(n).fill(0);
+    let dataIdx = 0;
+
+    for (let i = 1; i <= n; i++) {
+      if ((i & (i - 1)) !== 0) hamming[i - 1] = parseInt(raw[dataIdx++]);
+    }
+
+    for (let i = 0; i < r; i++) {
+      let pPos = Math.pow(2, i);
+      let val = 0;
+      for (let j = 1; j <= n; j++) {
+        if (j & pPos && j !== pPos) val ^= hamming[j - 1];
+      }
+      hamming[pPos - 1] = val;
+      logTo(
+        "enc_log",
+        `${ui.calcP}${pPos} = <span class="highlight-green">${val}</span>`,
+      );
+    }
+
+    logTo("enc_log", `\n${ui.final}`, "highlight-blue");
+    logTo("enc_log", hamming.join(""), "highlight-green");
+  });
+
+  document.getElementById("btn_decode")?.addEventListener("click", () => {
+    const logEl = document.getElementById("dec_log");
+    logEl.innerHTML = "";
+    let raw = document.getElementById("dec_input").value.replace(/\s/g, "");
+    if (!validate(raw)) return alert(ui.errBin);
+
+    const n = raw.length;
+    let r = 0;
+    while (Math.pow(2, r) < n + 1) r++;
+
+    let bits = raw.split("").map(Number);
+    let syndrome = 0;
+
+    logTo("dec_log", ui.startDec, "highlight-blue");
+
+    for (let i = 0; i < r; i++) {
+      let pPos = Math.pow(2, i);
+      let sBit = 0;
+      for (let j = 1; j <= n; j++) {
+        if (j & pPos) sBit ^= bits[j - 1];
+      }
+      if (sBit) syndrome += pPos;
+      logTo("dec_log", `${ui.calcS}${i + 1} (pos ${pPos}) = ${sBit}`);
+    }
+
+    logTo(
+      "dec_log",
+      `\n${ui.syndrome} <span class="highlight-green">${syndrome}</span>`,
+    );
+
+    if (syndrome === 0) {
+      logTo("dec_log", ui.noErr, "highlight-green");
+    } else {
+      logTo("dec_log", `${ui.errAt}${syndrome}`, "highlight-red");
+      bits[syndrome - 1] ^= 1;
+      logTo("dec_log", ui.fixing, "highlight-blue");
+    }
+
+    let extracted = "";
+    for (let i = 1; i <= n; i++) {
+      if ((i & (i - 1)) !== 0) extracted += bits[i - 1];
+    }
+
+    logTo("dec_log", `\n${ui.final} ${bits.join("")}`);
+    logTo("dec_log", `\n${ui.extracted}`, "highlight-blue");
+    logTo("dec_log", extracted, "highlight-green");
+  });
+</script>
