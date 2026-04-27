@@ -5,8 +5,12 @@ import partytown from '@astrojs/partytown';
 
 export default defineConfig({
   site: 'https://calculator.k5sha.xyz', 
+  trailingSlash: 'always',
+
   integrations: [
-    partytown({ config: { forward: ['dataLayer.push'] } }),
+    partytown({ 
+      config: { forward: ['dataLayer.push'] } 
+    }),
     sitemap({
       i18n: {
         defaultLocale: 'uk', 
@@ -14,12 +18,6 @@ export default defineConfig({
           uk: 'uk-UA',
           en: 'en-US',
         },
-      },
-      serialize(item) {
-        if (/codes/.test(item.url)) {
-          item.priority = 0.8;
-        }
-        return item;
       },
     }),
   ],
