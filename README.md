@@ -15,7 +15,7 @@
 
 <img width="1200" height="630" alt="og" src="https://github.com/user-attachments/assets/4ce4ba32-793f-4cb5-a673-2234a16a8757" />
 
-[**Live Demo**](https://calculator.k5sha.xyz/)
+[**Live Demo**](https://calculator.k5sha.com/)
 
 ## ✨ Features
 
@@ -109,7 +109,7 @@ Distributed under the Apache-2.0 license. See `LICENSE` for more information.
 
 **k5sha**
 * GitHub: [@k5sha](https://github.com/k5sha)
-* Website: [k5sha.xyz](https://k5sha.xyz)
+* Website: [k5sha.com](https://k5sha.com)
 
 ---
 

@@ -9,7 +9,7 @@ interface Props {
 
 const { title, keywords, description } = Astro.props;
 
-const siteBase = Astro.site || "https://calculator.k5sha.xyz";
+const siteBase = Astro.site || "https://calculator.k5sha.com";
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
@@ -26,7 +26,7 @@ const navT = {
 
 const canonicalURL = new URL(
   Astro.url.pathname,
-  Astro.site || "https://calculator.k5sha.xyz",
+  Astro.site || "https://calculator.k5sha.com",
 );
 
 const alternateLang = lang === "en" ? "uk" : "en";
@@ -36,7 +36,7 @@ const alternatePath = Astro.url.pathname.replace(
 );
 const alternateURL = new URL(
   alternatePath,
-  Astro.site || "https://calculator.k5sha.xyz",
+  Astro.site || "https://calculator.k5sha.com",
 );
 ---
 

@@ -4,7 +4,7 @@ import sitemap from '@astrojs/sitemap';
 import partytown from '@astrojs/partytown';
 
 export default defineConfig({
-  site: 'https://calculator.k5sha.xyz', 
+  site: 'https://calculator.k5sha.com', 
   trailingSlash: 'always',
 
   integrations: [
