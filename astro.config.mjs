@@ -5,7 +5,7 @@ import partytown from '@astrojs/partytown';
 
 export default defineConfig({
   site: 'https://calculator.k5sha.com', 
-  trailingSlash: 'always',
+  trailingSlash: 'ignore',
 
   integrations: [
     partytown({ 

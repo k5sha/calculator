@@ -1,21 +1,21 @@
 <!doctype html>
-<html>
+<html lang="uk">
   <head>
-    <meta http-equiv="refresh" content="0;url=/en/" />
+    <meta charset="UTF-8" />
+    <title>Redirecting...</title>
+
     <script is:inline>
-      const userLang = navigator.language || navigator.userLanguage;
-      if (
-        userLang.startsWith("uk") ||
-        userLang.startsWith("be") ||
-        userLang.startsWith("ru")
-      ) {
-        window.location.href = "/uk/";
-      } else {
-        window.location.href = "/en/";
-      }
+      (function () {
+        var userLang = navigator.language || navigator.userLanguage || "";
+        var isUkGroup = userLang.startsWith("uk") || userLang.startsWith("be") || userLang.startsWith("ru");
+        var target = isUkGroup ? "/uk/" : "/en/";
+        window.location.replace(target);
+      })();
     </script>
+    <noscript>
+      <meta http-equiv="refresh" content="0;url=/uk/" />
+    </noscript>
   </head>
-  <body>
-    <p>Redirecting to <a href="/en/">English version</a>...</p>
+  <body style="display: none; background: #000;">
   </body>
 </html>
